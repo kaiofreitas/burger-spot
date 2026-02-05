@@ -71,7 +71,7 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="px-6 pt-16 pb-12">
         <div className="flex items-start justify-between mb-10">
-          <h1 className="text-6xl leading-[0.85] tracking-tight font-bold text-[#DC2626]">
+          <h1 className="text-6xl leading-[0.85] tracking-tight font-bold text-[#F97316]">
             BRANDÃO<br/>BURGUER
           </h1>
           <div className="bg-[#FEF3C7] px-3 py-1.5 rounded-full mt-2">
@@ -143,7 +143,7 @@ const App: React.FC = () => {
         <div className="fixed bottom-8 left-6 right-6 z-40 max-w-md mx-auto">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full bg-[#DC2626] text-[#FFFBEB] h-16 rounded-[2rem] shadow-2xl shadow-[#DC2626]/20 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
+            className="w-full bg-[#F97316] text-[#FFFBEB] h-16 rounded-[2rem] shadow-2xl shadow-[#F97316]/20 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
           >
             <div className="flex items-center gap-4">
               <div className="bg-[#FEF3C7] text-[#1C1917] h-12 px-6 rounded-[1.5rem] flex items-center justify-center font-bold text-lg">

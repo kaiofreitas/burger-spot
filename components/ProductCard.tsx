@@ -37,7 +37,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, quantity, onAdd,
         />
         {/* Floating Price Tag */}
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
-          <span className="text-lg font-semibold text-[#DC2626]" style={{ fontFamily: 'Inter, sans-serif' }}>R${item.price.toFixed(2)}</span>
+          <span className="text-lg font-semibold text-[#F97316]" style={{ fontFamily: 'Inter, sans-serif' }}>R${item.price.toFixed(2)}</span>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, quantity, onAdd,
         {quantity === 0 ? (
           <button
             onClick={onAdd}
-            className="w-full py-4 rounded-2xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-sm uppercase tracking-widest transition-all active:scale-95 group flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-[#F97316] hover:bg-[#B91C1C] text-white font-bold text-sm uppercase tracking-widest transition-all active:scale-95 group flex items-center justify-center gap-2"
           >
             <span>Pedir Agora</span>
             <Plus size={16} className="group-hover:rotate-90 transition-transform" />

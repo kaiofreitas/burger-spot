@@ -111,7 +111,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 <input
                   type="text"
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#A8A29E]"
                   placeholder="Seu nome"
                   value={details.name}
                   onChange={e => setDetails({...details, name: e.target.value})}
@@ -121,7 +121,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 <label className="block text-base font-semibold text-[#1C1917] mb-3">Endereço</label>
                 <textarea
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] h-32 resize-none placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] h-32 resize-none placeholder:text-[#A8A29E]"
                   placeholder="Endereço de entrega"
                   value={details.address}
                   onChange={e => setDetails({...details, address: e.target.value})}
@@ -131,7 +131,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 <label className="block text-base font-semibold text-[#1C1917] mb-3">Observações (opcional)</label>
                 <input
                   type="text"
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#A8A29E]"
                   placeholder="Instruções especiais"
                   value={details.notes}
                   onChange={e => setDetails({...details, notes: e.target.value})}
@@ -145,14 +145,14 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         <div className="p-6 border-t border-[#E7E5E4] bg-white">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium text-[#78716C]">Total</span>
-            <span className="text-2xl font-bold text-[#DC2626]">R${total.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-[#F97316]">R${total.toFixed(2)}</span>
           </div>
 
           {step === 'review' ? (
             <button
               onClick={() => setStep('details')}
               disabled={items.length === 0}
-              className="w-full h-14 bg-[#DC2626] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
+              className="w-full h-14 bg-[#F97316] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
             >
               Continuar
             </button>
