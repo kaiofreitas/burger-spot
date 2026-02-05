@@ -53,5 +53,5 @@ export const BURGERS: Burger[] = [
 ];
 
 export const WHATSAPP_NUMBER = "529999999999"; // ALTERAR
-export const RESTAURANT_NAME = "BURGER SPOT";
+export const RESTAURANT_NAME = "BRANDÃO BURGUER";
 export const TAGLINE = "Sucos. Gostos. Momentos.";

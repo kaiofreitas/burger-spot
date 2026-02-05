@@ -72,7 +72,7 @@ const App: React.FC = () => {
       <header className="px-6 pt-16 pb-12">
         <div className="flex items-start justify-between mb-10">
           <h1 className="text-6xl leading-[0.85] tracking-tight font-bold text-[#DC2626]">
-            {RESTAURANT_NAME.split(' ')[0]}<br/>{RESTAURANT_NAME.split(' ')[1]}
+            BRANDÃO<br/>BURGUER
           </h1>
           <div className="bg-[#FEF3C7] px-3 py-1.5 rounded-full mt-2">
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#1C1917]">Desde 2025</span>
@@ -81,8 +81,8 @@ const App: React.FC = () => {
 
         <div className="space-y-1">
           <p className="text-xl text-[#1C1917] font-medium tracking-tight">{TAGLINE}</p>
-          <p className="text-xl text-[#1C1917] font-medium tracking-tight">Brasileiros de alma.</p>
-          <p className="text-xl text-[#1C1917]/60 font-normal tracking-tight">Sabor de verdade.</p>
+          <p className="text-xl text-[#1C1917] font-medium tracking-tight">Carne de verdade.</p>
+          <p className="text-xl text-[#1C1917]/60 font-normal tracking-tight">Sabor autêntico.</p>
         </div>
       </header>
 
@@ -127,7 +127,7 @@ const App: React.FC = () => {
               Porque acreditamos que uma boa refeição transforma o dia.
             </p>
             <p className="text-[#78716C] text-sm">
-              — A Equipe {RESTAURANT_NAME}
+              — A Equipe BRANDÃO BURGUER
             </p>
           </div>
         </div>
@@ -135,7 +135,7 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <div className="text-center py-16 opacity-40">
-        <p className="serif italic">{RESTAURANT_NAME} • Sabor & Amor</p>
+        <p className="serif italic">BRANDÃO BURGUER • Sabor & Tradição</p>
       </div>
 
       {/* Floating Cart Pill */}
