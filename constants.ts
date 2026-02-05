@@ -51,4 +51,4 @@ export const COOKIES: Cookie[] = [
   }
 ];
 
-export const WHATSAPP_NUMBER = "5215538583953";
+export const WHATSAPP_NUMBER = "529844497471";
