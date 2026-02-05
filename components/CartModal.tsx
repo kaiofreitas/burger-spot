@@ -23,19 +23,19 @@ export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQu
   }, []);
 
   const handleCheckout = () => {
-    const itemsList = items.map(i => `• ${i.quantity}x ${i.name} ($${(i.price * i.quantity).toFixed(2)} MXN)`).join('\n');
+    const itemsList = items.map(i => `• ${i.quantity}x ${i.name} (R$${(i.price * i.quantity).toFixed(2)})`).join('\n');
     const message = `
-¡Hola AMORDIDAS! 🍪 Pedido nuevo:
+Olá BURGER SPOT! 🍔 Novo pedido:
 
-*ITEMS:*
+*ITENS:*
 ${itemsList}
 
-*TOTAL: $${total.toFixed(2)} MXN*
+*TOTAL: R$${total.toFixed(2)}*
 
 *CLIENTE:*
 ${details.name}
 ${details.address}
-${details.notes ? `Nota: ${details.notes}` : ''}
+${details.notes ? `Observação: ${details.notes}` : ''}
 `.trim();
 
     const encodedMessage = encodeURIComponent(message);
@@ -54,7 +54,7 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
         {/* Header */}
         <div className="p-6 border-b border-[#E7E5E4] flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-[#1C1917]">
-            {step === 'review' ? 'Tu Caja' : 'Entrega'}
+            {step === 'review' ? 'Seu Pedido' : 'Entrega'}
           </h2>
           <button
             onClick={onClose}
@@ -70,7 +70,7 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
             <div className="space-y-4">
               {items.length === 0 ? (
                 <div className="text-center py-20 text-[#78716C]">
-                  <p className="text-lg">Tu caja está vacía</p>
+                  <p className="text-lg">Seu pedido está vazio</p>
                 </div>
               ) : (
                 items.map(item => (
@@ -82,7 +82,7 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-lg text-[#1C1917] mb-1">{item.name}</h4>
-                      <p className="text-sm text-[#78716C] mb-3">${item.price.toFixed(2)} MXN</p>
+                      <p className="text-sm text-[#78716C] mb-3">R${item.price.toFixed(2)}</p>
 
                       <div className="flex items-center gap-3">
                         <button
@@ -107,32 +107,32 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
           ) : (
             <div className="space-y-6">
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Nombre</label>
+                <label className="block text-base font-semibold text-[#1C1917] mb-3">Nome</label>
                 <input
                   type="text"
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#1C1917] placeholder:text-[#A8A29E]"
-                  placeholder="Tu nombre"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] placeholder:text-[#A8A29E]"
+                  placeholder="Seu nome"
                   value={details.name}
                   onChange={e => setDetails({...details, name: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Dirección</label>
+                <label className="block text-base font-semibold text-[#1C1917] mb-3">Endereço</label>
                 <textarea
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#1C1917] h-32 resize-none placeholder:text-[#A8A29E]"
-                  placeholder="Dirección de entrega"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] h-32 resize-none placeholder:text-[#A8A29E]"
+                  placeholder="Endereço de entrega"
                   value={details.address}
                   onChange={e => setDetails({...details, address: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Notas (opcional)</label>
+                <label className="block text-base font-semibold text-[#1C1917] mb-3">Observações (opcional)</label>
                 <input
                   type="text"
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#1C1917] placeholder:text-[#A8A29E]"
-                  placeholder="Instrucciones especiales"
+                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#DC2626] placeholder:text-[#A8A29E]"
+                  placeholder="Instruções especiais"
                   value={details.notes}
                   onChange={e => setDetails({...details, notes: e.target.value})}
                 />
@@ -145,14 +145,14 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
         <div className="p-6 border-t border-[#E7E5E4] bg-white">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium text-[#78716C]">Total</span>
-            <span className="text-2xl font-bold text-[#1C1917]">${total.toFixed(2)} MXN</span>
+            <span className="text-2xl font-bold text-[#DC2626]">R${total.toFixed(2)}</span>
           </div>
 
           {step === 'review' ? (
             <button
               onClick={() => setStep('details')}
               disabled={items.length === 0}
-              className="w-full h-14 bg-[#1C1917] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
+              className="w-full h-14 bg-[#DC2626] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
             >
               Continuar
             </button>
@@ -162,14 +162,14 @@ ${details.notes ? `Nota: ${details.notes}` : ''}
                 onClick={() => setStep('review')}
                 className="h-14 px-6 bg-[#F5F5F4] text-[#1C1917] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
               >
-                Atrás
+                Voltar
               </button>
               <button
                 onClick={handleCheckout}
                 disabled={!details.name || !details.address}
                 className="flex-1 h-14 bg-[#25D366] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
               >
-                Enviar a WhatsApp
+                Enviar WhatsApp
               </button>
             </div>
           )}

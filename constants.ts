@@ -1,54 +1,57 @@
-import { Cookie } from './types';
+import { Burger } from './types';
+import { ShoppingCart, MapPin, Clock } from 'lucide-react';
 
-export const COOKIES: Cookie[] = [
+export const BURGERS: Burger[] = [
   {
-    id: 'c1',
-    name: 'La Clásica O.G.',
-    description: 'Estilo clásico de NYC. Trozos de chocolate tamaño nuez, bordes crujientes, centro suave.',
-    price: 55,
-    image: 'https://thescranline.com/wp-content/uploads/2025/01/NYC-STYLE-TRIPLE-CHOCOLATE-CHIP-COOKIES-S-01.jpg',
-    tags: ['chocolate', 'clásica', 'dulce']
+    id: 'b1',
+    name: 'Clássica Americana',
+    description: 'Pão brioche, carne 180g, queijo cheddar, alface, tomate e nosso molho especial.',
+    price: 189,
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+    tags: ['clássica', 'tradicional']
   },
   {
-    id: 'c2',
-    name: 'Eclipse de Cacao',
-    description: 'Masa de chocolate oscuro, chispas de chocolate blanco y un toque de espresso.',
-    price: 65,
-    image: 'https://northeastnosh.com/wp-content/uploads/2024/12/Chocolate-Chip-Cookies-Levain-Bakery-NYC.jpg',
-    tags: ['chocolate oscuro', 'intenso', 'café']
+    id: 'b2',
+    name: 'Bacon Supreme',
+    description: 'Carne suculenta, bacon crocante, cheddar fundido, cebola caramelizada e maionese de bacon.',
+    price: 219,
+    image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=600&q=80',
+    tags: ['bacon', 'premium']
   },
   {
-    id: 'c3',
-    name: 'Pecado Rojo',
-    description: 'Masa vibrante de red velvet rellena con un núcleo de glaseado de queso crema.',
-    price: 70,
-    image: 'https://thescranline.com/wp-content/uploads/2025/02/NYC-RED-VELVET-CHEESECAKE-STUFFED-COOKIES-WEB-01-768x1024.jpg',
-    tags: ['pastel', 'queso crema', 'dulce']
+    id: 'b3',
+    name: 'Duplo Cheese',
+    description: 'Duas carnes, dois queijos cheddar, picles e ketchup artesanal.',
+    price: 229,
+    image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&q=80',
+    tags: ['duplo', 'queijo']
   },
   {
-    id: 'c4',
-    name: 'Abrazo de Abuela',
-    description: 'Avena abundante, nueces tostadas y pasas. ¿Desayuno o postre?',
-    price: 60,
-    image: 'https://static.wixstatic.com/media/aa246c_62dd793624f04eda91a52e1b35c617c4~mv2.png/v1/fill/w_310,h_311,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/u6183816391_Decadent_New_York_style_chocolate_cookie_split_op_e86dcb74-f8ca-4559-9cd3-376b.png',
-    tags: ['nueces', 'textura', 'clásica']
+    id: 'b4',
+    name: 'Picante Mexicana',
+    description: 'Carne temperada com cominho, jalapeño, guacamole, queijo pepper jack e tortilla chips.',
+    price: 209,
+    image: 'https://images.unsplash.com/photo-1605789538467-f715d58e03f3?w=600&q=80',
+    tags: ['picante', 'mexicana']
   },
   {
-    id: 'c5',
-    name: 'Jardín Japonés',
-    description: 'Masa de té verde matcha premium con nueces de macadamia tostadas.',
-    price: 70,
-    image: 'https://www.lifeloveandsugar.com/wp-content/uploads/2025/02/MM-Cookies3.jpg',
-    tags: ['té', 'nueces', 'única']
+    id: 'b5',
+    name: 'BBQ Ranch',
+    description: 'Molho BBQ defumado, onion rings, ranch caseiro e bacon.',
+    price: 219,
+    image: 'https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?w=600&q=80',
+    tags: ['BBQ', 'defumado']
   },
   {
-    id: 'c6',
-    name: 'Fuego Dulce',
-    description: 'Masa de galleta graham, crema de malvavisco y barras Hershey.',
-    price: 65,
-    image: 'https://plantbasedrdblog.com/wp-content/uploads/2022/12/chocolate-peanut-butter-stuffed-cookies_feat.jpg',
-    tags: ['malvavisco', 'pegajosa', 'favorita de niños']
+    id: 'b6',
+    name: 'Veggie Delight',
+    description: 'Hambúrguer de grão-de-bico, abacate, rúcula, tomate seco e maionese de ervas.',
+    price: 179,
+    image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=600&q=80',
+    tags: ['veggie', 'vegetariano']
   }
 ];
 
-export const WHATSAPP_NUMBER = "529844497471";
+export const WHATSAPP_NUMBER = "529999999999"; // ALTERAR
+export const RESTAURANT_NAME = "BURGER SPOT";
+export const TAGLINE = "Sucos. Gostos. Momentos.";

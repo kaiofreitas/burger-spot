@@ -1,23 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { COOKIES } from './constants';
+import { BURGERS, RESTAURANT_NAME, TAGLINE } from './constants';
 import { CartItem } from './types';
 import { ProductCard } from './components/ProductCard';
 import { CartModal } from './components/CartModal';
 
-const pastelColors = [
-  '#F5F1E8', // Light beige
-  '#E9F3FF', // Light blue
-  '#E8F5E9', // Light green
-  '#FFF3E0', // Light orange
-  '#F3E5F5', // Light purple
-  '#FCE4EC', // Light pink
-  '#F5F1E8', // Light beige (loops back to start)
+const warmColors = [
+  '#FFF8F0', // Cream
+  '#FFEBD6', // Light peach
+  '#FFDAB3', // Peach
+  '#FFF0E6', // Light warm orange
+  '#FFE4D6', // Warm beige
+  '#FFF8F0', // Loop back
 ];
 
 const App: React.FC = () => {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [bgColor, setBgColor] = useState(pastelColors[0]);
+  const [bgColor, setBgColor] = useState(warmColors[0]);
 
   const handleUpdateQuantity = (id: string, delta: number) => {
     setCart(prev => {
@@ -34,9 +33,9 @@ const App: React.FC = () => {
   const cartItems: CartItem[] = useMemo(() => {
     return Object.entries(cart)
       .map(([id, quantity]) => {
-        const cookie = COOKIES.find(c => c.id === id);
-        if (!cookie) return null;
-        return { ...cookie, quantity };
+        const burger = BURGERS.find(b => b.id === id);
+        if (!burger) return null;
+        return { ...burger, quantity };
       })
       .filter((item): item is CartItem => item !== null);
   }, [cart]);
@@ -50,13 +49,12 @@ const App: React.FC = () => {
       const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrollPercentage = scrollPosition / windowHeight;
 
-      // Calculate which color to use based on scroll
       const colorIndex = Math.min(
-        Math.floor(scrollPercentage * pastelColors.length),
-        pastelColors.length - 1
+        Math.floor(scrollPercentage * warmColors.length),
+        warmColors.length - 1
       );
 
-      setBgColor(pastelColors[colorIndex]);
+      setBgColor(warmColors[colorIndex]);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -73,46 +71,46 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="px-6 pt-16 pb-12">
         <div className="flex items-start justify-between mb-10">
-          <h1 className="logo-font text-6xl text-[#A8D5BA] leading-[0.85] tracking-tight font-bold">
-            AMOR<br/>DIDAS
+          <h1 className="text-6xl leading-[0.85] tracking-tight font-bold text-[#DC2626]">
+            {RESTAURANT_NAME.split(' ')[0]}<br/>{RESTAURANT_NAME.split(' ')[1]}
           </h1>
-          <div className="bg-[#FCE4EC] px-3 py-1.5 rounded-full mt-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1C1917]">Hecho en CDMX</span>
+          <div className="bg-[#FEF3C7] px-3 py-1.5 rounded-full mt-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1C1917]">Desde 2025</span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <p className="text-xl text-[#1C1917] font-medium tracking-tight">Galletas gorditas.</p>
-          <p className="text-xl text-[#1C1917] font-medium tracking-tight">Corazón suave.</p>
-          <p className="text-xl text-[#1C1917]/60 font-normal tracking-tight">Hechas a mano.</p>
+          <p className="text-xl text-[#1C1917] font-medium tracking-tight">{TAGLINE}</p>
+          <p className="text-xl text-[#1C1917] font-medium tracking-tight">Brasileiros de alma.</p>
+          <p className="text-xl text-[#1C1917]/60 font-normal tracking-tight">Sabor de verdade.</p>
         </div>
       </header>
 
       {/* Product List */}
       <main className="px-4 flex flex-col gap-6">
-        {COOKIES.map(cookie => (
+        {BURGERS.map(burger => (
           <ProductCard 
-            key={cookie.id}
-            cookie={cookie}
-            quantity={cart[cookie.id] || 0}
-            onAdd={() => handleUpdateQuantity(cookie.id, 1)}
-            onRemove={() => handleUpdateQuantity(cookie.id, -1)}
+            key={burger.id}
+            item={burger}
+            quantity={cart[burger.id] || 0}
+            onAdd={() => handleUpdateQuantity(burger.id, 1)}
+            onRemove={() => handleUpdateQuantity(burger.id, -1)}
           />
         ))}
       </main>
 
-      {/* Bio Section */}
+      {/* About Section */}
       <section className="px-6 py-16 max-w-lg mx-auto">
         <h3 className="text-2xl font-semibold text-[#1C1917] mb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-          Sobre Nosotros
+          Nossa História
         </h3>
 
         <div className="flex flex-col gap-6">
           {/* Photo */}
           <div className="w-full aspect-[4/3] rounded-2xl bg-[#F5F5F4] overflow-hidden">
             <img
-              src="https://via.placeholder.com/600x450"
-              alt="Maker"
+              src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80"
+              alt="Restaurant"
               className="w-full h-full object-cover"
             />
           </div>
@@ -120,13 +118,16 @@ const App: React.FC = () => {
           {/* Text */}
           <div>
             <p className="text-[#1C1917] text-base leading-relaxed mb-4">
-              Desde niña, siempre soñé con crear algo que hiciera sonreír a la gente. Después de años trabajando en oficinas, decidí arriesgarme y seguir mi pasión: hornear. AMORDIDAS nació en mi pequeña cocina en CDMX, experimentando con recetas hasta encontrar el equilibrio perfecto entre bordes crujientes y centros suaves.
+              Tudo começou com uma pergunta simples: "Por que não existe um burger que lembre o sabor de verdade?" 
+              Depois de anos aperfeiçoando receitas na cozinha de casa, nascemos com uma missão: 
+              trazer de volta o sabor autêntico das hamburguerias tradicionais.
             </p>
             <p className="text-[#1C1917] text-base leading-relaxed mb-4">
-              Cada galleta es hecha a mano con ingredientes de calidad, porque creo que la comida hecha con amor sabe diferente. Mi sueño es que cada mordida te recuerde a esos momentos especiales de la infancia, cuando todo parecía más simple y dulce.
+              Cada burger é preparado na grelha, com ingredientes selecionados e muito cuidado. 
+              Porque acreditamos que uma boa refeição transforma o dia.
             </p>
             <p className="text-[#78716C] text-sm">
-              — Sarah
+              — A Equipe {RESTAURANT_NAME}
             </p>
           </div>
         </div>
@@ -134,7 +135,7 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <div className="text-center py-16 opacity-40">
-        <p className="serif italic">corazón colombiano, hecho con amor en cdmx</p>
+        <p className="serif italic">{RESTAURANT_NAME} • Sabor & Amor</p>
       </div>
 
       {/* Floating Cart Pill */}
@@ -142,15 +143,15 @@ const App: React.FC = () => {
         <div className="fixed bottom-8 left-6 right-6 z-40 max-w-md mx-auto">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full bg-[#1C1917] text-[#FDFBF7] h-16 rounded-[2rem] shadow-2xl shadow-[#1C1917]/20 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
+            className="w-full bg-[#DC2626] text-[#FFFBEB] h-16 rounded-[2rem] shadow-2xl shadow-[#DC2626]/20 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
           >
             <div className="flex items-center gap-4">
-              <div className="bg-[#94C9C6] text-[#0f2e2c] h-12 px-6 rounded-[1.5rem] flex items-center justify-center font-bold text-lg">
+              <div className="bg-[#FEF3C7] text-[#1C1917] h-12 px-6 rounded-[1.5rem] flex items-center justify-center font-bold text-lg">
                 {totalItems}
               </div>
-              <span className="text-sm font-bold uppercase tracking-widest">Ver Caja</span>
+              <span className="text-sm font-bold uppercase tracking-widest">Ver Pedido</span>
             </div>
-            <span className="text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>${totalPrice.toFixed(2)} MXN</span>
+            <span className="text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>R${totalPrice.toFixed(2)}</span>
           </button>
         </div>
       )}

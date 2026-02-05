@@ -1,4 +1,4 @@
-export interface Cookie {
+export interface Burger {
   id: string;
   name: string;
   description: string;
@@ -7,7 +7,7 @@ export interface Cookie {
   tags: string[];
 }
 
-export interface CartItem extends Cookie {
+export interface CartItem extends Burger {
   quantity: number;
 }
 
@@ -15,9 +15,4 @@ export interface UserDetails {
   name: string;
   address: string;
   notes: string;
-}
-
-export interface GeminiRecommendationRequest {
-  userQuery: string;
-  availableCookies: Cookie[];
 }
