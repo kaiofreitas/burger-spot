@@ -10,8 +10,14 @@ export interface Product {
 /** @deprecated Use Product instead */
 export type Burger = Product;
 
+export interface CartEntry {
+  quantity: number;
+  notes: string;
+}
+
 export interface CartItem extends Product {
   quantity: number;
+  notes: string;
 }
 
 export interface Bairro {

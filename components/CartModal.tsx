@@ -8,10 +8,11 @@ interface CartModalProps {
   items: CartItem[];
   onClose: () => void;
   onUpdateQuantity: (id: string, delta: number) => void;
+  onUpdateNotes: (id: string, notes: string) => void;
   total: number;
 }
 
-export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, total }) => {
+export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, onUpdateNotes, total }) => {
   const [step, setStep] = useState<'review' | 'details' | 'payment'>('review');
   const [details, setDetails] = useState<UserDetails>({ name: '', address: '', bairro: '', notes: '', payment: '' });
   const [copied, setCopied] = useState(false);
@@ -45,7 +46,13 @@ export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQu
   };
 
   const handleCheckout = () => {
-    const itemsList = items.map(i => `• ${i.quantity}x ${i.name} (R$${(i.price * i.quantity).toFixed(2)})`).join('\n');
+    const itemsList = items.map(i => {
+      let line = `• ${i.quantity}x ${i.name} (R$${(i.price * i.quantity).toFixed(2)})`;
+      if (i.notes) {
+        line += `\n  Obs: ${i.notes}`;
+      }
+      return line;
+    }).join('\n');
     const paymentLabel = details.payment ? PAYMENT_LABELS[details.payment] : '';
     const deliveryLine = details.bairro && deliveryFee > 0
       ? `\n(Subtotal R$${total.toFixed(2)} + Entrega R$${deliveryFee.toFixed(2)})`
@@ -103,32 +110,41 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 </div>
               ) : (
                 items.map(item => (
-                  <div key={item.id} className="flex items-center gap-4 py-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                  <div key={item.id} className="py-4">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-base text-[#F5F5F5]">{item.name}</h4>
+                        <p className="text-sm text-[#A3A3A3]">R${item.price.toFixed(2)} cada</p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => onUpdateQuantity(item.id, -1)}
+                          className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
+                        <button
+                          onClick={() => onUpdateQuantity(item.id, 1)}
+                          className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+                      <span className="text-sm font-semibold text-[#F97316] w-16 text-right flex-shrink-0">R${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={item.notes}
+                      onChange={e => onUpdateNotes(item.id, e.target.value)}
+                      placeholder="Alguma observação? (ex: sem alface, sem cebola)"
+                      className="w-full mt-2 px-3 py-2 bg-[#242424] border border-[#333333] rounded-lg text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#F97316] placeholder:text-[#555555]"
                     />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-base text-[#F5F5F5]">{item.name}</h4>
-                      <p className="text-sm text-[#A3A3A3]">R${item.price.toFixed(2)} cada</p>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => onUpdateQuantity(item.id, -1)}
-                        className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
-                      >
-                        <Minus size={12} />
-                      </button>
-                      <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
-                      <button
-                        onClick={() => onUpdateQuantity(item.id, 1)}
-                        className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
-                      >
-                        <Plus size={12} />
-                      </button>
-                    </div>
-                    <span className="text-sm font-semibold text-[#F97316] w-16 text-right flex-shrink-0">R${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))
               )}

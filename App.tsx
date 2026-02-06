@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BURGERS, ALL_PRODUCTS, RESTAURANT_NAME, TAGLINE } from './constants';
-import { CartItem } from './types';
+import { CartEntry, CartItem } from './types';
 import { ProductCard } from './components/ProductCard';
 import { CartModal } from './components/CartModal';
 import { DrinksPage } from './components/DrinksPage';
@@ -17,34 +17,63 @@ const warmColors = [
   '#1A1A1A', // Loop back
 ];
 
+const getQuantity = (cart: Record<string, CartEntry>, id: string): number => {
+  const entry = cart[id];
+  return entry ? entry.quantity : 0;
+};
+
 const App: React.FC = () => {
-  const [cart, setCart] = useState<Record<string, number>>({});
+  const [cart, setCart] = useState<Record<string, CartEntry>>({});
   const [view, setView] = useState<View>('home');
   const [bgColor, setBgColor] = useState(warmColors[0]);
 
   const handleUpdateQuantity = (id: string, delta: number) => {
     setCart(prev => {
-      const current = prev[id] || 0;
+      const entry = prev[id];
+      const current = entry ? entry.quantity : 0;
       const next = Math.max(0, current + delta);
       if (next === 0) {
         const { [id]: _, ...rest } = prev;
         return rest;
       }
-      return { ...prev, [id]: next };
+      return { ...prev, [id]: { quantity: next, notes: entry?.notes || '' } };
+    });
+  };
+
+  const handleAddNewItem = (id: string) => {
+    const entry = cart[id];
+    if (entry && entry.quantity > 0) {
+      // Item already in cart, just increment
+      handleUpdateQuantity(id, 1);
+    } else {
+      // New item — add directly to cart with empty notes
+      setCart(prev => ({
+        ...prev,
+        [id]: { quantity: 1, notes: '' },
+      }));
+    }
+  };
+
+  const handleUpdateNotes = (id: string, notes: string) => {
+    setCart(prev => {
+      const entry = prev[id];
+      if (!entry) return prev;
+      return { ...prev, [id]: { ...entry, notes } };
     });
   };
 
   const cartItems: CartItem[] = useMemo(() => {
-    return Object.entries(cart)
-      .map(([id, quantity]) => {
+    const entries: [string, CartEntry][] = Object.entries(cart) as [string, CartEntry][];
+    return entries
+      .map(([id, entry]) => {
         const product = ALL_PRODUCTS.find(p => p.id === id);
         if (!product) return null;
-        return { ...product, quantity };
+        return { ...product, quantity: entry.quantity, notes: entry.notes };
       })
       .filter((item): item is CartItem => item !== null);
   }, [cart]);
 
-  const totalItems = (Object.values(cart) as number[]).reduce((a, b) => a + b, 0);
+  const totalItems: number = (Object.values(cart) as CartEntry[]).reduce((a: number, entry: CartEntry) => a + entry.quantity, 0);
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   useEffect(() => {
@@ -96,8 +125,8 @@ const App: React.FC = () => {
           <ProductCard
             key={burger.id}
             item={burger}
-            quantity={cart[burger.id] || 0}
-            onAdd={() => handleUpdateQuantity(burger.id, 1)}
+            quantity={getQuantity(cart, burger.id)}
+            onAdd={() => handleAddNewItem(burger.id)}
             onRemove={() => handleUpdateQuantity(burger.id, -1)}
           />
         ))}
@@ -180,6 +209,7 @@ const App: React.FC = () => {
           total={totalPrice}
           onClose={() => setView('drinks')}
           onUpdateQuantity={handleUpdateQuantity}
+          onUpdateNotes={handleUpdateNotes}
         />
       )}
     </div>
