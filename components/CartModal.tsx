@@ -85,10 +85,11 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-[#1A1A1A] w-full h-full flex flex-col overflow-hidden">
+      <div className="relative bg-[#1A1A1A] w-full h-full overflow-y-auto">
+        <div className="min-h-full flex flex-col p-6">
 
         {/* Header */}
-        <div className="p-6 border-b border-[#2E2E2E] flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-[#F5F5F5]">
             {step === 'review' ? 'Revise seu pedido' : step === 'details' ? 'Entrega' : 'Pagamento'}
           </h2>
@@ -101,7 +102,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1">
           {step === 'review' ? (
             <div className="divide-y divide-[#2E2E2E]">
               {items.length === 0 ? (
@@ -111,15 +112,14 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
               ) : (
                 items.map(item => (
                   <div key={item.id} className="py-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-base text-[#F5F5F5]">{item.name}</h4>
-                        <p className="text-sm text-[#A3A3A3]">R${item.price.toFixed(2)} cada</p>
+                        <h4 className="font-medium text-[15px] text-[#F5F5F5]">{item.name}</h4>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
@@ -128,7 +128,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                         >
                           <Minus size={12} />
                         </button>
-                        <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
+                        <span className="font-semibold text-sm w-5 text-center text-[#F5F5F5]">{item.quantity}</span>
                         <button
                           onClick={() => onUpdateQuantity(item.id, 1)}
                           className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
@@ -136,15 +136,17 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                           <Plus size={12} />
                         </button>
                       </div>
-                      <span className="text-sm font-semibold text-[#F97316] w-16 text-right flex-shrink-0">R${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-[#F97316] w-20 text-right flex-shrink-0">R${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
-                    <input
-                      type="text"
-                      value={item.notes}
-                      onChange={e => onUpdateNotes(item.id, e.target.value)}
-                      placeholder="Alguma observação? (ex: sem alface, sem cebola)"
-                      className="w-full mt-2 px-3 py-2 bg-[#242424] border border-[#333333] rounded-lg text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#F97316] placeholder:text-[#555555]"
-                    />
+                    {item.category !== 'drink' && (
+                      <input
+                        type="text"
+                        value={item.notes}
+                        onChange={e => onUpdateNotes(item.id, e.target.value)}
+                        placeholder="Alguma observação? (ex: sem alface, sem cebola)"
+                        className="w-full mt-2 px-3 py-2 bg-[#242424] border border-[#333333] rounded-lg text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#F97316] placeholder:text-[#555555]"
+                      />
+                    )}
                   </div>
                 ))
               )}
@@ -218,7 +220,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
               ))}
 
               {details.payment === 'pix' && (
-                <div className="mt-6 p-5 bg-[#F97316]/10 border-2 border-[#F97316] rounded-2xl space-y-4">
+                <div className="mt-6 p-5 bg-[#2A2A2A] border border-[#333333] rounded-2xl space-y-4">
                   <p className="text-sm font-semibold text-[#F5F5F5]">Chave Pix</p>
                   <button
                     onClick={handleCopyPix}
@@ -244,7 +246,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[#2E2E2E] bg-[#1A1A1A]">
+        <div className="mt-8 pt-6 border-t border-[#2E2E2E]">
           {deliveryFee > 0 ? (
             <div className="mb-4 space-y-1">
               <div className="flex justify-between items-center">
@@ -308,6 +310,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
               </button>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
