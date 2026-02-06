@@ -16,8 +16,15 @@ interface CartModalProps {
 
 export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, onUpdateNotes, total, closing = false }) => {
   const [step, setStep] = useState<'review' | 'details' | 'payment'>('review');
+  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
   const [details, setDetails] = useState<UserDetails>({ name: '', address: '', bairro: '', notes: '', payment: '' });
   const [copied, setCopied] = useState(false);
+
+  const goTo = (next: 'review' | 'details' | 'payment') => {
+    const order = ['review', 'details', 'payment'] as const;
+    setDirection(order.indexOf(next) > order.indexOf(step) ? 'forward' : 'back');
+    setStep(next);
+  };
 
   const deliveryFee = useMemo(() => {
     if (!details.bairro) return 0;
@@ -113,7 +120,11 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         </div>
 
         {/* Content */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
+          <div
+            key={step}
+            className={direction === 'forward' ? 'step-slide-in-right' : 'step-slide-in-left'}
+          >
           {step === 'review' ? (
             <div className="divide-y divide-[#2E2E2E]">
               {items.length === 0 ? (
@@ -254,6 +265,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
               )}
             </div>
           )}
+          </div>
         </div>
 
         {/* Footer */}
@@ -282,7 +294,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
 
           {step === 'review' ? (
             <button
-              onClick={() => setStep('details')}
+              onClick={() => goTo('details')}
               disabled={items.length === 0}
               className="w-full h-14 bg-[#F97316] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
             >
@@ -291,13 +303,13 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
           ) : step === 'details' ? (
             <div className="flex gap-3">
               <button
-                onClick={() => setStep('review')}
+                onClick={() => goTo('review')}
                 className="h-14 px-6 bg-[#2A2A2A] text-[#F5F5F5] border border-[#333333] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
               >
                 Voltar
               </button>
               <button
-                onClick={() => setStep('payment')}
+                onClick={() => goTo('payment')}
                 disabled={!details.name || !details.address || !details.bairro}
                 className="flex-1 h-14 bg-[#F97316] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
               >
@@ -307,7 +319,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
           ) : (
             <div className="flex gap-3">
               <button
-                onClick={() => setStep('details')}
+                onClick={() => goTo('details')}
                 className="h-14 px-6 bg-[#2A2A2A] text-[#F5F5F5] border border-[#333333] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
               >
                 Voltar

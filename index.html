@@ -65,8 +65,19 @@
       .page-exit { animation: slideDown 200ms ease-in both; }
       .backdrop-enter { animation: fadeIn 200ms ease-out both; }
       .backdrop-exit { animation: fadeOut 200ms ease-in both; }
+      @keyframes stepSlideInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes stepSlideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .step-slide-in-right { animation: stepSlideInRight 200ms ease-out both; }
+      .step-slide-in-left { animation: stepSlideInLeft 200ms ease-out both; }
       @media (prefers-reduced-motion: reduce) {
-        .page-enter, .page-exit, .backdrop-enter, .backdrop-exit {
+        .page-enter, .page-exit, .backdrop-enter, .backdrop-exit,
+        .step-slide-in-right, .step-slide-in-left {
           animation: none !important;
         }
       }
