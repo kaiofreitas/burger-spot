@@ -66,6 +66,27 @@ export function useAdminProducts() {
     }
   };
 
+  const reorderProducts = async (orderedIds: string[]) => {
+    // Optimistic update: assign sequential sort_order values
+    setProducts(prev => {
+      const idToOrder = new Map(orderedIds.map((id, i) => [id, i]));
+      return prev
+        .map(p => idToOrder.has(p.id) ? { ...p, sort_order: idToOrder.get(p.id)! } : p)
+        .sort((a, b) => a.category.localeCompare(b.category) || a.sort_order - b.sort_order);
+    });
+
+    // Batch update to Supabase
+    const updates = orderedIds.map((id, index) =>
+      supabase.from('products').update({ sort_order: index }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    const hasError = results.some(r => r.error);
+    if (hasError) {
+      console.error('Error reordering products');
+      await fetchProducts();
+    }
+  };
+
   const createProduct = async (product: Omit<Product, 'id'>) => {
     const newProduct: Product = {
       ...product,
@@ -86,5 +107,5 @@ export function useAdminProducts() {
     }
   };
 
-  return { products, loading, toggleAvailability, updateProduct, createProduct, refetch: fetchProducts };
+  return { products, loading, toggleAvailability, updateProduct, createProduct, reorderProducts, refetch: fetchProducts };
 }

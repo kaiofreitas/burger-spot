@@ -1,4 +1,18 @@
 import React, { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
 import { useAdminProducts } from '../../hooks/useAdminProducts';
 import { useAdminBairros } from '../../hooks/useAdminBairros';
 import { AdminProductRow } from './AdminProductRow';
@@ -12,7 +26,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onSignOut }) => {
-  const { products, loading: productsLoading, toggleAvailability, updateProduct, createProduct } = useAdminProducts();
+  const { products, loading: productsLoading, toggleAvailability, updateProduct, createProduct, reorderProducts } = useAdminProducts();
   const { bairros, loading: bairrosLoading, toggleActive, updateBairro, createBairro } = useAdminBairros();
 
   const [view, setView] = useState<'products' | 'bairros'>('products');
@@ -22,9 +36,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onSignOut }) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [showBairroForm, setShowBairroForm] = useState(false);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
   const filteredProducts = filter === 'all'
     ? products
     : products.filter(p => p.category === filter);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = filteredProducts.findIndex(p => p.id === active.id);
+    const newIndex = filteredProducts.findIndex(p => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove([...filteredProducts], oldIndex, newIndex);
+    reorderProducts(reordered.map((p: Product) => p.id));
+  };
 
   const handleProductSave = async (data: Omit<Product, 'id'> | (Partial<Product> & { id: string })) => {
     if ('id' in data && data.id) {
@@ -160,21 +191,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onSignOut }) => {
           </div>
 
           {/* Product List */}
-          <div className="px-4 flex flex-col gap-2">
-            {filteredProducts.map(product => (
-              <AdminProductRow
-                key={product.id}
-                product={product}
-                onToggle={toggleAvailability}
-                onEdit={handleEditProduct}
-              />
-            ))}
-            {filteredProducts.length === 0 && (
-              <p className="text-center py-8" style={{ color: '#A3A3A3' }}>
-                Nenhum produto encontrado.
-              </p>
-            )}
-          </div>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={filteredProducts.map(p => p.id)} strategy={verticalListSortingStrategy}>
+              <div className="px-4 flex flex-col gap-2">
+                {filteredProducts.map(product => (
+                  <AdminProductRow
+                    key={product.id}
+                    product={product}
+                    onToggle={toggleAvailability}
+                    onEdit={handleEditProduct}
+                  />
+                ))}
+                {filteredProducts.length === 0 && (
+                  <p className="text-center py-8" style={{ color: '#A3A3A3' }}>
+                    Nenhum produto encontrado.
+                  </p>
+                )}
+              </div>
+            </SortableContext>
+          </DndContext>
         </>
       )}
 

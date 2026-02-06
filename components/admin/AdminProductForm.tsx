@@ -20,7 +20,6 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
   const [image, setImage] = useState(product?.image || '');
   const [category, setCategory] = useState<'burger' | 'drink'>(product?.category || 'burger');
   const [tags, setTags] = useState(product?.tags?.join(', ') || '');
-  const [sortOrder, setSortOrder] = useState(product?.sort_order?.toString() || '0');
   const [available, setAvailable] = useState(product?.available ?? true);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -63,7 +62,6 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
       .filter(t => t.length > 0);
 
     const parsedPrice = parseFloat(price) || 0;
-    const parsedSortOrder = parseInt(sortOrder, 10) || 0;
 
     let finalImage = image;
 
@@ -101,7 +99,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
         image: finalImage,
         category,
         tags: parsedTags,
-        sort_order: parsedSortOrder,
+        sort_order: product.sort_order,
         available,
       });
     } else {
@@ -112,7 +110,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
         image: finalImage,
         category,
         tags: parsedTags,
-        sort_order: parsedSortOrder,
+        sort_order: 0,
         available,
       });
     }
@@ -271,21 +269,6 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
             className="w-full px-3 py-2.5 rounded-lg text-sm outline-none"
             style={inputStyle}
             placeholder="artesanal, especial, novo"
-          />
-        </div>
-
-        {/* Sort Order */}
-        <div className="mb-4">
-          <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
-            Ordem
-          </label>
-          <input
-            type="number"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-lg text-sm outline-none"
-            style={inputStyle}
-            placeholder="0"
           />
         </div>
 
