@@ -26,7 +26,7 @@ export const BAIRROS: Bairro[] = [
   { id: 23, name: 'Volta Grande', fee: 10, active: true, sort_order: 22 },
 ];
 
-export const WHATSAPP_NUMBER = "529844497471";
+export const WHATSAPP_NUMBER = "5524998221778";
 export const PIX_KEY = "email@brandaoburguer.com"; // ALTERAR
 export const RESTAURANT_NAME = "BRANDAO BURGUER";
 export const TAGLINE = "Lanche de verdade,";

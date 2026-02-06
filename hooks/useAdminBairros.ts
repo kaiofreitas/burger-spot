@@ -10,7 +10,7 @@ export function useAdminBairros() {
     if (!supabaseConfigured) return;
     setLoading(true);
     const { data, error } = await supabase
-      .from('bairros')
+      .from('delivery_areas')
       .select('*')
       .order('sort_order');
 
@@ -34,7 +34,7 @@ export function useAdminBairros() {
     );
 
     const { error } = await supabase
-      .from('bairros')
+      .from('delivery_areas')
       .update({ active })
       .eq('id', id);
 
@@ -54,7 +54,7 @@ export function useAdminBairros() {
     );
 
     const { error } = await supabase
-      .from('bairros')
+      .from('delivery_areas')
       .update(updates)
       .eq('id', id);
 
@@ -76,7 +76,7 @@ export function useAdminBairros() {
     setBairros(prev => [...prev, newBairro]);
 
     const { error } = await supabase
-      .from('bairros')
+      .from('delivery_areas')
       .insert(bairro);
 
     if (error) {
