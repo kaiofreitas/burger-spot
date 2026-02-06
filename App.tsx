@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { RESTAURANT_NAME, TAGLINE } from './constants';
 import { CartEntry, CartItem } from './types';
 import { ProductCard } from './components/ProductCard';
@@ -78,48 +78,115 @@ const App: React.FC = () => {
   const totalItems: number = (Object.values(cart) as CartEntry[]).reduce((a: number, entry: CartEntry) => a + entry.quantity, 0);
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
+  // View transition state
+  const [showDrinks, setShowDrinks] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [closingDrinks, setClosingDrinks] = useState(false);
+  const [closingCart, setClosingCart] = useState(false);
+
+  const handleOpenDrinks = useCallback(() => {
+    setView('drinks');
+    setShowDrinks(true);
+  }, []);
+
+  const handleCloseDrinks = useCallback(() => {
+    setClosingDrinks(true);
+    setTimeout(() => {
+      setClosingDrinks(false);
+      setShowDrinks(false);
+      setView('home');
+    }, 200);
+  }, []);
+
+  const handleCloseCart = useCallback(() => {
+    setClosingCart(true);
+    setTimeout(() => {
+      setClosingCart(false);
+      setShowCart(false);
+      setView('home');
+    }, 200);
+  }, []);
+
+  const handleContinueToCart = useCallback(() => {
+    // Close drinks with animation, then open cart
+    setClosingDrinks(true);
+    setTimeout(() => {
+      setClosingDrinks(false);
+      setShowDrinks(false);
+      setView('cart');
+      setShowCart(true);
+    }, 200);
+  }, []);
+
+  // Throttled scroll handler
+  const rafRef = useRef<number>(0);
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercentage = scrollPosition / windowHeight;
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        const scrollPosition = window.scrollY;
+        const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercentage = scrollPosition / windowHeight;
 
-      const colorIndex = Math.min(
-        Math.floor(scrollPercentage * warmColors.length),
-        warmColors.length - 1
-      );
+        const colorIndex = Math.min(
+          Math.floor(scrollPercentage * warmColors.length),
+          warmColors.length - 1
+        );
 
-      setBgColor(warmColors[colorIndex]);
+        setBgColor(warmColors[colorIndex]);
+        rafRef.current = 0;
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   if (loading) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center max-w-md mx-auto"
+        className="min-h-[100dvh] max-w-md mx-auto"
         style={{ backgroundColor: '#1A1A1A' }}
       >
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            border: '4px solid #333333',
-            borderTop: '4px solid #F97316',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }}
-        />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        {/* Header skeleton */}
+        <div className="px-6 pt-16 pb-12">
+          <div className="mb-10">
+            <div className="h-14 w-48 bg-[#242424] rounded-lg animate-pulse mb-3" />
+            <div className="h-6 w-24 bg-[#242424] rounded-full animate-pulse" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-5 w-64 bg-[#242424] rounded animate-pulse" />
+            <div className="h-5 w-48 bg-[#242424] rounded animate-pulse" />
+          </div>
+        </div>
+        {/* Product card skeletons */}
+        <div className="px-4 flex flex-col gap-6">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-[#242424] p-3 rounded-[2.5rem] border border-[#2E2E2E] animate-pulse">
+              <div className="aspect-square rounded-[2rem] bg-[#1A1A1A] mb-4" />
+              <div className="px-3 pb-3">
+                <div className="h-6 w-40 bg-[#1A1A1A] rounded mb-3 mt-8" />
+                <div className="flex gap-2 mb-4">
+                  <div className="h-5 w-16 bg-[#1A1A1A] rounded-full" />
+                  <div className="h-5 w-20 bg-[#1A1A1A] rounded-full" />
+                </div>
+                <div className="h-4 w-full bg-[#1A1A1A] rounded mb-2" />
+                <div className="h-4 w-3/4 bg-[#1A1A1A] rounded mb-6" />
+                <div className="h-12 w-full bg-[#1A1A1A] rounded-2xl" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
     <div
-      className="min-h-screen pb-40 max-w-md mx-auto text-[#F5F5F5] transition-colors duration-1000 ease-out relative overflow-hidden"
+      className="min-h-[100dvh] pb-40 max-w-md mx-auto text-[#F5F5F5] transition-colors duration-1000 ease-out relative overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
       <div className="relative" style={{ zIndex: 1 }}>
@@ -196,44 +263,48 @@ const App: React.FC = () => {
 
       {/* Floating Pill - "Escolher Bebidas" when items in cart */}
       {totalItems > 0 && view === 'home' && (
-        <div className="fixed bottom-8 left-6 right-6 z-40 max-w-md mx-auto">
-          <button
-            onClick={() => setView('drinks')}
-            className="w-full bg-[#F5F5F5] text-[#1A1A1A] h-16 rounded-[2rem] shadow-2xl shadow-black/30 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
-          >
-            <div className="flex items-center gap-4">
-              <div className="bg-[#F97316] text-white h-12 px-6 rounded-[1.5rem] flex items-center justify-center font-bold text-lg">
-                {totalItems}
+        <div className="fixed left-0 right-0 z-40 px-6" style={{ bottom: 'calc(2rem + var(--sab))' }}>
+          <div className="max-w-md mx-auto">
+            <button
+              onClick={handleOpenDrinks}
+              className="w-full bg-[#F5F5F5] text-[#1A1A1A] h-16 rounded-[2rem] shadow-2xl shadow-black/30 flex items-center justify-between px-2 pr-8 transition-transform active:scale-95 hover:scale-[1.02]"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-[#F97316] text-white h-12 px-6 rounded-[1.5rem] flex items-center justify-center font-bold text-lg">
+                  {totalItems}
+                </div>
+                <span className="text-sm font-bold uppercase tracking-widest">Escolher Bebidas</span>
               </div>
-              <span className="text-sm font-bold uppercase tracking-widest">Escolher Bebidas</span>
-            </div>
-            <ArrowRight size={20} />
-          </button>
+              <ArrowRight size={20} />
+            </button>
+          </div>
         </div>
       )}
 
       </div>
 
       {/* Drinks Page */}
-      {view === 'drinks' && (
+      {showDrinks && (
         <DrinksPage
           cart={cart}
           drinks={drinks}
           totalItems={totalItems}
           onUpdateQuantity={handleUpdateQuantity}
-          onContinueToCart={() => setView('cart')}
-          onClose={() => setView('home')}
+          onContinueToCart={handleContinueToCart}
+          onClose={handleCloseDrinks}
+          closing={closingDrinks}
         />
       )}
 
       {/* Cart Modal */}
-      {view === 'cart' && (
+      {showCart && (
         <CartModal
           items={cartItems}
           total={totalPrice}
-          onClose={() => setView('home')}
+          onClose={handleCloseCart}
           onUpdateQuantity={handleUpdateQuantity}
           onUpdateNotes={handleUpdateNotes}
+          closing={closingCart}
         />
       )}
     </div>

@@ -48,8 +48,8 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
         </button>
 
         <div className="mb-6">
-          <h3 className="serif text-xl text-[#F5F5F5] mb-1">Sommelier de Galletas</h3>
-          <p className="text-[#F97316] text-xs uppercase tracking-widest font-bold">AMORDIDAS AI</p>
+          <h3 className="serif text-xl text-[#F5F5F5] mb-1">Consultor de Burgers</h3>
+          <p className="text-[#F97316] text-xs uppercase tracking-widest font-bold">BRANDAO AI</p>
         </div>
 
         <div className="mb-6">
@@ -60,13 +60,13 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
                 onClick={() => { setResponse(''); setQuery(''); }}
                 className="block mt-4 text-[#F97316] font-bold text-xs hover:underline uppercase tracking-wider"
               >
-                Preguntar de nuevo
+                Perguntar novamente
               </button>
             </div>
           ) : (
             <p className="text-[#A3A3A3] text-sm">
-              Describe tus gustos. Nosotros recomendamos. <br/>
-              <span className="italic opacity-50">ej. "algo con chocolate pero salado"</span>
+              Descreva suas preferencias. Nos recomendamos. <br/>
+              <span className="italic opacity-50">ex. "algo com bacon mas nao muito gorduroso"</span>
             </p>
           )}
         </div>
@@ -77,7 +77,7 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Escribe tu antojo..."
+              placeholder="Descreva o que voce quer..."
               className="w-full bg-[#2A2A2A] border border-[#333333] rounded-lg pl-4 pr-12 py-4 text-[#F5F5F5] placeholder:text-[#666666] focus:ring-1 focus:ring-[#F97316] outline-none text-sm"
               disabled={isLoading}
             />

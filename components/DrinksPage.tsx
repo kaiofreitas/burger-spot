@@ -9,6 +9,7 @@ interface DrinksPageProps {
   onUpdateQuantity: (id: string, delta: number) => void;
   onContinueToCart: () => void;
   onClose: () => void;
+  closing?: boolean;
 }
 
 export const DrinksPage: React.FC<DrinksPageProps> = ({
@@ -18,6 +19,7 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
   onUpdateQuantity,
   onContinueToCart,
   onClose,
+  closing = false,
 }) => {
   // Check if any drinks are in the cart
   const hasDrinksInCart = drinks.some(d => (cart[d.id]?.quantity || 0) > 0);
@@ -33,9 +35,9 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
   return (
     <div className="fixed inset-0 z-50" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${closing ? 'backdrop-exit' : 'backdrop-enter'}`} onClick={onClose} />
 
-      <div className="relative bg-[#1A1A1A] w-full h-full flex flex-col overflow-hidden">
+      <div className={`relative bg-[#1A1A1A] w-full h-full flex flex-col overflow-hidden modal-container max-w-md mx-auto ${closing ? 'page-exit' : 'page-enter'}`}>
         {/* Header */}
         <div className="p-6 border-b border-[#2E2E2E] bg-[#1A1A1A] flex justify-between items-center flex-shrink-0">
           <h2 className="text-2xl font-semibold text-[#F5F5F5]">Bebidas</h2>
@@ -48,7 +50,7 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
         </div>
 
         {/* Scrollable drink list */}
-        <div className="flex-1 overflow-y-auto p-4 pb-32">
+        <div className="flex-1 overflow-y-auto p-4 pb-32" style={{ overscrollBehavior: 'contain' }}>
           <div className="flex flex-col gap-3">
             {drinks.map(drink => {
               const qty = cart[drink.id]?.quantity || 0;
@@ -95,7 +97,7 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
         </div>
 
         {/* Bottom CTA */}
-        <div className="fixed bottom-8 left-0 right-0 z-50 px-6">
+        <div className="fixed left-0 right-0 z-50 px-6" style={{ bottom: 'calc(2rem + var(--sab))' }}>
           <div className="max-w-md mx-auto">
             <button
               onClick={onContinueToCart}

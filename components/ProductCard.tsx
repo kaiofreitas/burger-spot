@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '../types';
 import { Plus, Minus } from 'lucide-react';
 
@@ -11,6 +11,18 @@ interface ProductCardProps {
 
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, quantity, onAdd, onRemove }) => {
+  const [justAdded, setJustAdded] = useState(false);
+  const prevQuantity = useRef(quantity);
+
+  useEffect(() => {
+    if (quantity > prevQuantity.current) {
+      setJustAdded(true);
+      const timer = setTimeout(() => setJustAdded(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevQuantity.current = quantity;
+  }, [quantity]);
+
   return (
     <div className="bg-[#242424] p-3 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.3)] transition-all duration-500 ease-out border border-[#2E2E2E]">
       {/* Image with Frame Effect */}
@@ -18,6 +30,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, quantity, onAdd,
         <img
           src={item.image}
           alt={item.name}
+          width={512}
+          height={512}
           className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
           loading="lazy"
         />
@@ -50,13 +64,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, quantity, onAdd,
         {quantity === 0 ? (
           <button
             onClick={onAdd}
-            className="w-full py-4 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm uppercase tracking-widest transition-all active:scale-95 group flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm uppercase tracking-widest transition-all duration-200 active:scale-95 group flex items-center justify-center gap-2"
           >
             <span>Pedir Agora</span>
             <Plus size={16} className="group-hover:rotate-90 transition-transform" />
           </button>
         ) : (
-          <div className="flex items-center justify-between bg-[#F97316] rounded-2xl p-2 pl-6">
+          <div
+            className="flex items-center justify-between bg-[#F97316] rounded-2xl p-2 pl-6 transition-transform duration-200"
+            style={justAdded ? { transform: 'scale(1.05)', transition: 'transform 150ms ease-out' } : { transform: 'scale(1)', transition: 'transform 150ms ease-out' }}
+          >
             <span className="font-bold text-white text-sm uppercase tracking-wider">
               {quantity} no pedido
             </span>

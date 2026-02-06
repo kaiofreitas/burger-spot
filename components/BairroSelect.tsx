@@ -20,16 +20,20 @@ export const BairroSelect: React.FC<BairroSelectProps> = ({ bairros, value, onCh
     ? bairros.filter(b => b.name.toLowerCase().includes(query.toLowerCase()))
     : bairros;
 
-  // Close dropdown on click outside
+  // Close dropdown on click/touch outside
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
         setQuery('');
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (bairro: Bairro) => {

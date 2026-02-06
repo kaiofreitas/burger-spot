@@ -3,6 +3,7 @@ import { CartItem, UserDetails, PaymentMethod } from '../types';
 import { WHATSAPP_NUMBER, PIX_KEY, BAIRROS } from '../constants';
 import { BairroSelect } from './BairroSelect';
 import { X, Minus, Plus, Smartphone, CreditCard, Banknote, Copy, Check } from 'lucide-react';
+import { saveOrder } from '../services/orderService';
 
 interface CartModalProps {
   items: CartItem[];
@@ -10,9 +11,10 @@ interface CartModalProps {
   onUpdateQuantity: (id: string, delta: number) => void;
   onUpdateNotes: (id: string, notes: string) => void;
   total: number;
+  closing?: boolean;
 }
 
-export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, onUpdateNotes, total }) => {
+export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, onUpdateNotes, total, closing = false }) => {
   const [step, setStep] = useState<'review' | 'details' | 'payment'>('review');
   const [details, setDetails] = useState<UserDetails>({ name: '', address: '', bairro: '', notes: '', payment: '' });
   const [copied, setCopied] = useState(false);
@@ -45,7 +47,16 @@ export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQu
     dinheiro: 'Dinheiro na entrega',
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    // Fire-and-forget: save order to Supabase, don't block WhatsApp
+    let orderNumber: number | null = null;
+    try {
+      orderNumber = await saveOrder(items, details, deliveryFee, grandTotal);
+    } catch (err) {
+      console.error('Failed to save order:', err);
+    }
+
+    const orderLine = orderNumber ? `*PEDIDO #${orderNumber}*\n\n` : '';
     const itemsList = items.map(i => {
       let line = `• ${i.quantity}x ${i.name} (R$${(i.price * i.quantity).toFixed(2)})`;
       if (i.notes) {
@@ -59,7 +70,7 @@ export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQu
       : '';
     const message = `
 Olá BRANDÃO BURGUER, esse é o meu pedido:
-
+${orderLine}
 *ITENS:*
 ${itemsList}
 
@@ -83,9 +94,9 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
   return (
     <div className="fixed inset-0 z-50" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${closing ? 'backdrop-exit' : 'backdrop-enter'}`} onClick={onClose} />
 
-      <div className="relative bg-[#1A1A1A] w-full h-full overflow-y-auto">
+      <div className={`relative bg-[#1A1A1A] w-full h-full overflow-y-auto modal-container max-w-md mx-auto ${closing ? 'page-exit' : 'page-enter'}`}>
         <div className="min-h-full flex flex-col p-6">
 
         {/* Header */}
