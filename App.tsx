@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { BURGERS, ALL_PRODUCTS, RESTAURANT_NAME, TAGLINE } from './constants';
+import { RESTAURANT_NAME, TAGLINE } from './constants';
 import { CartEntry, CartItem } from './types';
 import { ProductCard } from './components/ProductCard';
 import { CartModal } from './components/CartModal';
 import { DrinksPage } from './components/DrinksPage';
+import { useProducts } from './hooks/useProducts';
 import { ArrowRight } from 'lucide-react';
 
 type View = 'home' | 'drinks' | 'cart';
@@ -23,6 +24,7 @@ const getQuantity = (cart: Record<string, CartEntry>, id: string): number => {
 };
 
 const App: React.FC = () => {
+  const { burgers, drinks, allProducts, loading } = useProducts();
   const [cart, setCart] = useState<Record<string, CartEntry>>({});
   const [view, setView] = useState<View>('home');
   const [bgColor, setBgColor] = useState(warmColors[0]);
@@ -66,12 +68,12 @@ const App: React.FC = () => {
     const entries: [string, CartEntry][] = Object.entries(cart) as [string, CartEntry][];
     return entries
       .map(([id, entry]) => {
-        const product = ALL_PRODUCTS.find(p => p.id === id);
+        const product = allProducts.find(p => p.id === id);
         if (!product) return null;
         return { ...product, quantity: entry.quantity, notes: entry.notes };
       })
       .filter((item): item is CartItem => item !== null);
-  }, [cart]);
+  }, [cart, allProducts]);
 
   const totalItems: number = (Object.values(cart) as CartEntry[]).reduce((a: number, entry: CartEntry) => a + entry.quantity, 0);
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -93,6 +95,27 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (loading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center max-w-md mx-auto"
+        style={{ backgroundColor: '#1A1A1A' }}
+      >
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            border: '4px solid #333333',
+            borderTop: '4px solid #F97316',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -121,7 +144,7 @@ const App: React.FC = () => {
 
       {/* Product List */}
       <main className="px-4 flex flex-col gap-6">
-        {BURGERS.map(burger => (
+        {burgers.map(burger => (
           <ProductCard
             key={burger.id}
             item={burger}
@@ -195,6 +218,7 @@ const App: React.FC = () => {
       {view === 'drinks' && (
         <DrinksPage
           cart={cart}
+          drinks={drinks}
           totalItems={totalItems}
           onUpdateQuantity={handleUpdateQuantity}
           onContinueToCart={() => setView('cart')}
@@ -207,7 +231,7 @@ const App: React.FC = () => {
         <CartModal
           items={cartItems}
           total={totalPrice}
-          onClose={() => setView('drinks')}
+          onClose={() => setView('home')}
           onUpdateQuantity={handleUpdateQuantity}
           onUpdateNotes={handleUpdateNotes}
         />

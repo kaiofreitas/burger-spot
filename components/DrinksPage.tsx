@@ -1,10 +1,10 @@
 import React from 'react';
-import { DRINKS } from '../constants';
-import { CartEntry } from '../types';
+import { CartEntry, Product } from '../types';
 import { X, ArrowRight, Plus, Minus } from 'lucide-react';
 
 interface DrinksPageProps {
   cart: Record<string, CartEntry>;
+  drinks: Product[];
   totalItems: number;
   onUpdateQuantity: (id: string, delta: number) => void;
   onContinueToCart: () => void;
@@ -13,13 +13,14 @@ interface DrinksPageProps {
 
 export const DrinksPage: React.FC<DrinksPageProps> = ({
   cart,
+  drinks,
   totalItems,
   onUpdateQuantity,
   onContinueToCart,
   onClose,
 }) => {
   // Check if any drinks are in the cart
-  const hasDrinksInCart = DRINKS.some(d => (cart[d.id]?.quantity || 0) > 0);
+  const hasDrinksInCart = drinks.some(d => (cart[d.id]?.quantity || 0) > 0);
 
   // Prevent body scroll when page is open
   React.useEffect(() => {
@@ -49,7 +50,7 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
         {/* Scrollable drink list */}
         <div className="flex-1 overflow-y-auto p-4 pb-32">
           <div className="flex flex-col gap-3">
-            {DRINKS.map(drink => {
+            {drinks.map(drink => {
               const qty = cart[drink.id]?.quantity || 0;
               return (
                 <div key={drink.id} className="flex items-center gap-3 bg-[#242424] p-3 rounded-2xl shadow-[0_2px_12px_rgb(0,0,0,0.2)] border border-[#2E2E2E]">

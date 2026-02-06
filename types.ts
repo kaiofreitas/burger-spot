@@ -5,6 +5,9 @@ export interface Product {
   price: number;
   image: string;
   tags: string[];
+  category: 'burger' | 'drink';
+  available: boolean;
+  sort_order: number;
 }
 
 /** @deprecated Use Product instead */
@@ -21,8 +24,11 @@ export interface CartItem extends Product {
 }
 
 export interface Bairro {
+  id: number;
   name: string;
   fee: number;
+  active: boolean;
+  sort_order: number;
 }
 
 export type PaymentMethod = 'pix' | 'cartao' | 'dinheiro';

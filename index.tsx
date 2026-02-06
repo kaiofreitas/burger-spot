@@ -1,6 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { AdminApp } from './AdminApp';
+import { useHashRoute } from './hooks/useHashRoute';
+
+const Root: React.FC = () => {
+  const { isAdmin } = useHashRoute();
+  return isAdmin ? <AdminApp /> : <App />;
+};
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -10,6 +17,6 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <Root />
   </React.StrictMode>
 );
