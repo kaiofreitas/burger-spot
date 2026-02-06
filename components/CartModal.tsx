@@ -83,7 +83,7 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         {/* Header */}
         <div className="p-6 border-b border-[#2E2E2E] flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-[#F5F5F5]">
-            {step === 'review' ? 'Seu Pedido' : step === 'details' ? 'Entrega' : 'Pagamento'}
+            {step === 'review' ? 'Revise seu pedido' : step === 'details' ? 'Entrega' : 'Pagamento'}
           </h2>
           <button
             onClick={onClose}
@@ -96,39 +96,39 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {step === 'review' ? (
-            <div className="space-y-4">
+            <div className="divide-y divide-[#2E2E2E]">
               {items.length === 0 ? (
                 <div className="text-center py-20 text-[#A3A3A3]">
                   <p className="text-lg">Seu pedido está vazio</p>
                 </div>
               ) : (
                 items.map(item => (
-                  <div key={item.id} className="flex gap-4 p-4 rounded-2xl bg-[#242424] border border-[#2E2E2E]">
+                  <div key={item.id} className="flex items-center gap-4 py-4">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
+                      className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-lg text-[#F5F5F5] mb-1">{item.name}</h4>
-                      <p className="text-sm text-[#F97316] mb-3">R${item.price.toFixed(2)}</p>
-
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, -1)}
-                          className="w-8 h-8 flex items-center justify-center bg-[#333333] rounded-lg hover:bg-[#404040] transition-colors text-[#F5F5F5]"
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, 1)}
-                          className="w-8 h-8 flex items-center justify-center bg-[#333333] rounded-lg hover:bg-[#404040] transition-colors text-[#F5F5F5]"
-                        >
-                          <Plus size={14} />
-                        </button>
-                      </div>
+                      <h4 className="font-medium text-base text-[#F5F5F5]">{item.name}</h4>
+                      <p className="text-sm text-[#A3A3A3]">R${item.price.toFixed(2)} cada</p>
                     </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => onUpdateQuantity(item.id, -1)}
+                        className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
+                      <button
+                        onClick={() => onUpdateQuantity(item.id, 1)}
+                        className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333] text-[#A3A3A3] hover:text-[#F5F5F5] hover:border-[#555] transition-colors"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                    <span className="text-sm font-semibold text-[#F97316] w-16 text-right flex-shrink-0">R${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))
               )}
