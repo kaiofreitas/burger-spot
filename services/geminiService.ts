@@ -1,5 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
-import { Cookie } from "../types";
+import { Product } from "../types";
+
+/** @deprecated Alias kept for legacy code */
+type Cookie = Product;
 
 // Initialize Gemini
 // Note: In a real production app, you might want to proxy this call to hide the key, 
