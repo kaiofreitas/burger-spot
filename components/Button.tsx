@@ -15,11 +15,11 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "px-6 py-4 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 text-sm tracking-wide uppercase";
   
   const variants = {
-    // Primary: Solid black for premium feel
-    primary: "bg-[#1C1917] text-[#FDFBF7] hover:bg-[#000]",
-    // Secondary: Bordered
-    secondary: "bg-transparent text-[#1C1917] border border-[#E7E5E4] hover:bg-[#E7E5E4]",
-    ghost: "bg-transparent text-[#666] hover:text-[#000]"
+    // Primary: Orange for brand accent on dark
+    primary: "bg-[#F97316] text-white hover:bg-[#EA580C]",
+    // Secondary: Dark bordered
+    secondary: "bg-transparent text-[#F5F5F5] border border-[#333333] hover:bg-[#2A2A2A]",
+    ghost: "bg-transparent text-[#A3A3A3] hover:text-[#F5F5F5]"
   };
 
   return (

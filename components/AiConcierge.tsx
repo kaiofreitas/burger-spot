@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Cookie } from '../types';
+import { Product } from '../types';
+
+/** @deprecated Alias kept for legacy code */
+type Cookie = Product;
 import { getCookieRecommendation } from '../services/geminiService';
 import { Sparkles, X, ArrowUp } from 'lucide-react';
 
@@ -25,9 +28,9 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
 
   if (!isOpen) {
     return (
-      <button 
+      <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-6 z-40 bg-[#1C1917] text-[#94C9C6] p-4 rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center justify-center ring-2 ring-[#1C1917] ring-offset-2 ring-offset-[#FDFBF7]"
+        className="fixed bottom-24 right-6 z-40 bg-[#F97316] text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center justify-center ring-2 ring-[#F97316] ring-offset-2 ring-offset-[#1A1A1A]"
       >
         <Sparkles size={20} strokeWidth={2} />
       </button>
@@ -35,33 +38,33 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-[#1C1917]/10 backdrop-blur-sm">
-      <div className="bg-[#FDFBF7] w-full max-w-md rounded-2xl p-6 shadow-xl border border-[#E7E5E4] relative animate-in slide-in-from-bottom-10 fade-in duration-300">
-        <button 
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="bg-[#242424] w-full max-w-md rounded-2xl p-6 shadow-xl border border-[#333333] relative animate-in slide-in-from-bottom-10 fade-in duration-300">
+        <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 text-[#A8A29E] hover:text-[#1C1917]"
+          className="absolute top-4 right-4 text-[#666666] hover:text-[#F5F5F5]"
         >
           <X size={20} />
         </button>
 
         <div className="mb-6">
-          <h3 className="serif text-xl text-[#1C1917] mb-1">Sommelier de Galletas</h3>
-          <p className="text-[#94C9C6] text-xs uppercase tracking-widest font-bold">AMORDIDAS AI</p>
+          <h3 className="serif text-xl text-[#F5F5F5] mb-1">Sommelier de Galletas</h3>
+          <p className="text-[#F97316] text-xs uppercase tracking-widest font-bold">AMORDIDAS AI</p>
         </div>
 
         <div className="mb-6">
           {response ? (
-            <div className="bg-[#94C9C6]/10 p-5 rounded-xl text-[#1C1917] text-sm leading-relaxed border border-[#94C9C6]/20">
+            <div className="bg-[#F97316]/10 p-5 rounded-xl text-[#D4D4D4] text-sm leading-relaxed border border-[#F97316]/20">
               {response}
-              <button 
+              <button
                 onClick={() => { setResponse(''); setQuery(''); }}
-                className="block mt-4 text-[#1C1917] font-bold text-xs hover:underline uppercase tracking-wider"
+                className="block mt-4 text-[#F97316] font-bold text-xs hover:underline uppercase tracking-wider"
               >
                 Preguntar de nuevo
               </button>
             </div>
           ) : (
-            <p className="text-[#57534E] text-sm">
+            <p className="text-[#A3A3A3] text-sm">
               Describe tus gustos. Nosotros recomendamos. <br/>
               <span className="italic opacity-50">ej. "algo con chocolate pero salado"</span>
             </p>
@@ -75,13 +78,13 @@ export const AiConcierge: React.FC<AiConciergeProps> = ({ cookies }) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Escribe tu antojo..."
-              className="w-full bg-white border border-[#E7E5E4] rounded-lg pl-4 pr-12 py-4 text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-1 focus:ring-[#94C9C6] outline-none text-sm"
+              className="w-full bg-[#2A2A2A] border border-[#333333] rounded-lg pl-4 pr-12 py-4 text-[#F5F5F5] placeholder:text-[#666666] focus:ring-1 focus:ring-[#F97316] outline-none text-sm"
               disabled={isLoading}
             />
-            <button 
+            <button
               type="submit"
               disabled={isLoading || !query.trim()}
-              className="absolute right-2 top-2 bottom-2 aspect-square flex items-center justify-center bg-[#1C1917] text-[#94C9C6] rounded-md disabled:opacity-50 hover:bg-[#292524]"
+              className="absolute right-2 top-2 bottom-2 aspect-square flex items-center justify-center bg-[#F97316] text-white rounded-md disabled:opacity-50 hover:bg-[#EA580C]"
             >
               {isLoading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
