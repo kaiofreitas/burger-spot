@@ -1,7 +1,6 @@
-import { Burger } from './types';
-import { ShoppingCart, MapPin, Clock } from 'lucide-react';
+import { Product, Bairro } from './types';
 
-export const BURGERS: Burger[] = [
+export const BURGERS: Product[] = [
   {
     id: 'b1',
     name: 'Clássica Americana',
@@ -52,6 +51,86 @@ export const BURGERS: Burger[] = [
   }
 ];
 
-export const WHATSAPP_NUMBER = "529999999999"; // ALTERAR
-export const RESTAURANT_NAME = "BRANDÃO BURGUER";
-export const TAGLINE = "Sucos. Gostos. Momentos.";
+export const DRINKS: Product[] = [
+  {
+    id: 'd1',
+    name: 'Coca-Cola',
+    description: 'Lata 350ml gelada, o clássico de sempre.',
+    price: 8.9,
+    image: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=600&q=80',
+    tags: ['refrigerante', 'clássico']
+  },
+  {
+    id: 'd2',
+    name: 'Guarana Antarctica',
+    description: 'Lata 350ml, sabor brasileiro inconfundivel.',
+    price: 7.9,
+    image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=600&q=80',
+    tags: ['refrigerante', 'nacional']
+  },
+  {
+    id: 'd3',
+    name: 'Suco de Laranja',
+    description: 'Natural, feito na hora com laranjas frescas. 400ml.',
+    price: 12.9,
+    image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=80',
+    tags: ['suco', 'natural']
+  },
+  {
+    id: 'd4',
+    name: 'Cerveja Artesanal',
+    description: 'IPA local, 473ml. Amargor equilibrado com notas citricas.',
+    price: 18.9,
+    image: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=600&q=80',
+    tags: ['cerveja', 'artesanal']
+  },
+  {
+    id: 'd5',
+    name: 'Agua Mineral',
+    description: 'Garrafa 500ml, com ou sem gas.',
+    price: 5.9,
+    image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600&q=80',
+    tags: ['agua', 'natural']
+  },
+  {
+    id: 'd6',
+    name: 'Milkshake',
+    description: 'Cremoso milkshake de baunilha com chantilly. 500ml.',
+    price: 19.9,
+    image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80',
+    tags: ['milkshake', 'sobremesa']
+  }
+];
+
+export const ALL_PRODUCTS: Product[] = [...BURGERS, ...DRINKS];
+
+export const BAIRROS: Bairro[] = [
+  { name: 'Aterrado', fee: 3 },
+  { name: 'Bela Vista', fee: 5 },
+  { name: 'Candelária', fee: 6 },
+  { name: 'Centro', fee: 3 },
+  { name: 'Colina', fee: 5 },
+  { name: 'Conforto', fee: 4 },
+  { name: 'Eucaliptal', fee: 7 },
+  { name: 'Ilha São João', fee: 6 },
+  { name: 'Jardim Amália', fee: 6 },
+  { name: 'Jardim Belvedere', fee: 7 },
+  { name: 'Jardim Normandia', fee: 5 },
+  { name: 'Laranjal', fee: 4 },
+  { name: 'Niterói', fee: 5 },
+  { name: 'Ponte Alta', fee: 8 },
+  { name: 'Retiro', fee: 5 },
+  { name: 'Roma', fee: 8 },
+  { name: 'Santa Cruz', fee: 7 },
+  { name: 'São Geraldo', fee: 6 },
+  { name: 'São Lucas', fee: 9 },
+  { name: 'Sessenta', fee: 4 },
+  { name: 'Vila Rica', fee: 6 },
+  { name: 'Vila Santa Cecília', fee: 3 },
+  { name: 'Volta Grande', fee: 10 },
+];
+
+export const WHATSAPP_NUMBER = "529844497471";
+export const PIX_KEY = "email@brandaoburguer.com"; // ALTERAR
+export const RESTAURANT_NAME = "BRANDAO BURGUER";
+export const TAGLINE = "Lanche de verdade,";

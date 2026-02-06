@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { CartItem, UserDetails } from '../types';
-import { WHATSAPP_NUMBER } from '../constants';
-import { X, Minus, Plus } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { CartItem, UserDetails, PaymentMethod } from '../types';
+import { WHATSAPP_NUMBER, PIX_KEY, BAIRROS } from '../constants';
+import { BairroSelect } from './BairroSelect';
+import { X, Minus, Plus, Smartphone, CreditCard, Banknote, Copy, Check } from 'lucide-react';
 
 interface CartModalProps {
   items: CartItem[];
@@ -11,8 +12,23 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQuantity, total }) => {
-  const [step, setStep] = useState<'review' | 'details'>('review');
-  const [details, setDetails] = useState<UserDetails>({ name: '', address: '', notes: '' });
+  const [step, setStep] = useState<'review' | 'details' | 'payment'>('review');
+  const [details, setDetails] = useState<UserDetails>({ name: '', address: '', bairro: '', notes: '', payment: '' });
+  const [copied, setCopied] = useState(false);
+
+  const deliveryFee = useMemo(() => {
+    if (!details.bairro) return 0;
+    const found = BAIRROS.find(b => b.name === details.bairro);
+    return found ? found.fee : 0;
+  }, [details.bairro]);
+
+  const grandTotal = total + deliveryFee;
+
+  const handleCopyPix = async () => {
+    await navigator.clipboard.writeText(PIX_KEY);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Prevent body scroll when modal is open
   React.useEffect(() => {
@@ -22,19 +38,32 @@ export const CartModal: React.FC<CartModalProps> = ({ items, onClose, onUpdateQu
     };
   }, []);
 
+  const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+    pix: 'Pix',
+    cartao: 'Cartão na entrega',
+    dinheiro: 'Dinheiro na entrega',
+  };
+
   const handleCheckout = () => {
     const itemsList = items.map(i => `• ${i.quantity}x ${i.name} (R$${(i.price * i.quantity).toFixed(2)})`).join('\n');
+    const paymentLabel = details.payment ? PAYMENT_LABELS[details.payment] : '';
+    const deliveryLine = details.bairro && deliveryFee > 0
+      ? `\n(Subtotal R$${total.toFixed(2)} + Entrega R$${deliveryFee.toFixed(2)})`
+      : '';
     const message = `
-Olá BURGER SPOT! 🍔 Novo pedido:
+Olá BRANDÃO BURGUER, esse é o meu pedido:
 
 *ITENS:*
 ${itemsList}
 
-*TOTAL: R$${total.toFixed(2)}*
+*TOTAL: R$${grandTotal.toFixed(2)}*${deliveryLine}
+
+*PAGAMENTO:* ${paymentLabel}
 
 *CLIENTE:*
 ${details.name}
 ${details.address}
+${details.bairro ? `Bairro: ${details.bairro}` : ''}
 ${details.notes ? `Observação: ${details.notes}` : ''}
 `.trim();
 
@@ -47,18 +76,18 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
   return (
     <div className="fixed inset-0 z-50" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-[#1C1917]/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white w-full h-full flex flex-col overflow-hidden">
+      <div className="relative bg-[#1A1A1A] w-full h-full flex flex-col overflow-hidden">
 
         {/* Header */}
-        <div className="p-6 border-b border-[#E7E5E4] flex justify-between items-center">
-          <h2 className="text-2xl font-semibold text-[#1C1917]">
-            {step === 'review' ? 'Seu Pedido' : 'Entrega'}
+        <div className="p-6 border-b border-[#2E2E2E] flex justify-between items-center">
+          <h2 className="text-2xl font-semibold text-[#F5F5F5]">
+            {step === 'review' ? 'Seu Pedido' : step === 'details' ? 'Entrega' : 'Pagamento'}
           </h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F5F5F4] transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#2A2A2A] transition-colors text-[#A3A3A3]"
           >
             <X size={20} />
           </button>
@@ -69,32 +98,32 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
           {step === 'review' ? (
             <div className="space-y-4">
               {items.length === 0 ? (
-                <div className="text-center py-20 text-[#78716C]">
+                <div className="text-center py-20 text-[#A3A3A3]">
                   <p className="text-lg">Seu pedido está vazio</p>
                 </div>
               ) : (
                 items.map(item => (
-                  <div key={item.id} className="flex gap-4 p-4 rounded-2xl bg-[#F5F5F4]">
+                  <div key={item.id} className="flex gap-4 p-4 rounded-2xl bg-[#242424] border border-[#2E2E2E]">
                     <img
                       src={item.image}
                       alt={item.name}
                       className="w-20 h-20 rounded-xl object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-lg text-[#1C1917] mb-1">{item.name}</h4>
-                      <p className="text-sm text-[#78716C] mb-3">R${item.price.toFixed(2)}</p>
+                      <h4 className="font-semibold text-lg text-[#F5F5F5] mb-1">{item.name}</h4>
+                      <p className="text-sm text-[#F97316] mb-3">R${item.price.toFixed(2)}</p>
 
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => onUpdateQuantity(item.id, -1)}
-                          className="w-8 h-8 flex items-center justify-center bg-white rounded-lg hover:bg-[#E7E5E4] transition-colors"
+                          className="w-8 h-8 flex items-center justify-center bg-[#333333] rounded-lg hover:bg-[#404040] transition-colors text-[#F5F5F5]"
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="font-semibold text-sm w-6 text-center">{item.quantity}</span>
+                        <span className="font-semibold text-sm w-6 text-center text-[#F5F5F5]">{item.quantity}</span>
                         <button
                           onClick={() => onUpdateQuantity(item.id, 1)}
-                          className="w-8 h-8 flex items-center justify-center bg-white rounded-lg hover:bg-[#E7E5E4] transition-colors"
+                          className="w-8 h-8 flex items-center justify-center bg-[#333333] rounded-lg hover:bg-[#404040] transition-colors text-[#F5F5F5]"
                         >
                           <Plus size={14} />
                         </button>
@@ -104,49 +133,123 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 ))
               )}
             </div>
-          ) : (
+          ) : step === 'details' ? (
             <div className="space-y-6">
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Nome</label>
+                <label className="block text-base font-semibold text-[#F5F5F5] mb-3">Nome</label>
                 <input
                   type="text"
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#2A2A2A] border border-[#333333] rounded-2xl text-base text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#666666]"
                   placeholder="Seu nome"
                   value={details.name}
                   onChange={e => setDetails({...details, name: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Endereço</label>
+                <label className="block text-base font-semibold text-[#F5F5F5] mb-3">Endereço</label>
                 <textarea
                   required
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] h-32 resize-none placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#2A2A2A] border border-[#333333] rounded-2xl text-base text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-[#F97316] h-32 resize-none placeholder:text-[#666666]"
                   placeholder="Endereço de entrega"
                   value={details.address}
                   onChange={e => setDetails({...details, address: e.target.value})}
                 />
               </div>
+              <BairroSelect
+                bairros={BAIRROS}
+                value={details.bairro}
+                onChange={(bairro) => setDetails({...details, bairro})}
+              />
               <div>
-                <label className="block text-base font-semibold text-[#1C1917] mb-3">Observações (opcional)</label>
+                <label className="block text-base font-semibold text-[#F5F5F5] mb-3">Observações (opcional)</label>
                 <input
                   type="text"
-                  className="w-full px-5 py-4 bg-[#F5F5F4] rounded-2xl text-base text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#A8A29E]"
+                  className="w-full px-5 py-4 bg-[#2A2A2A] border border-[#333333] rounded-2xl text-base text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-[#F97316] placeholder:text-[#666666]"
                   placeholder="Instruções especiais"
                   value={details.notes}
                   onChange={e => setDetails({...details, notes: e.target.value})}
                 />
               </div>
             </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-sm text-[#A3A3A3] mb-2">Como você prefere pagar?</p>
+              {([
+                { id: 'pix' as PaymentMethod, label: 'Pix', icon: Smartphone, desc: 'Transferência instantânea' },
+                { id: 'cartao' as PaymentMethod, label: 'Cartão na entrega', icon: CreditCard, desc: 'Débito ou crédito' },
+                { id: 'dinheiro' as PaymentMethod, label: 'Dinheiro na entrega', icon: Banknote, desc: 'Pagamento em espécie' },
+              ]).map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => setDetails({ ...details, payment: option.id })}
+                  className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-colors text-left ${
+                    details.payment === option.id
+                      ? 'border-[#F97316] bg-[#F97316]/10'
+                      : 'border-[#333333] bg-[#242424] hover:border-[#404040]'
+                  }`}
+                >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                    details.payment === option.id ? 'bg-[#F97316] text-white' : 'bg-[#333333] text-[#A3A3A3]'
+                  }`}>
+                    <option.icon size={22} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[#F5F5F5]">{option.label}</p>
+                    <p className="text-sm text-[#A3A3A3]">{option.desc}</p>
+                  </div>
+                </button>
+              ))}
+
+              {details.payment === 'pix' && (
+                <div className="mt-6 p-5 bg-[#F97316]/10 border-2 border-[#F97316] rounded-2xl space-y-4">
+                  <p className="text-sm font-semibold text-[#F5F5F5]">Chave Pix</p>
+                  <button
+                    onClick={handleCopyPix}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-[#2A2A2A] rounded-xl border border-[#333333] active:scale-[0.98] transition-transform"
+                  >
+                    <span className="text-base font-mono text-[#F5F5F5] truncate">{PIX_KEY}</span>
+                    {copied ? (
+                      <Check size={18} className="text-[#22C55E] flex-shrink-0" />
+                    ) : (
+                      <Copy size={18} className="text-[#A3A3A3] flex-shrink-0" />
+                    )}
+                  </button>
+                  {copied && (
+                    <p className="text-xs text-[#22C55E] font-medium">Chave copiada!</p>
+                  )}
+                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
+                    Salve o comprovante, você vai precisar enviá-lo depois via WhatsApp.
+                  </p>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[#E7E5E4] bg-white">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-medium text-[#78716C]">Total</span>
-            <span className="text-2xl font-bold text-[#F97316]">R${total.toFixed(2)}</span>
-          </div>
+        <div className="p-6 border-t border-[#2E2E2E] bg-[#1A1A1A]">
+          {deliveryFee > 0 ? (
+            <div className="mb-4 space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#A3A3A3]">Subtotal</span>
+                <span className="text-sm text-[#A3A3A3]">R${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#A3A3A3]">Entrega ({details.bairro})</span>
+                <span className="text-sm text-[#A3A3A3]">R${deliveryFee.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-[#2E2E2E] pt-2 mt-2 flex justify-between items-center">
+                <span className="text-sm font-medium text-[#F5F5F5]">Total</span>
+                <span className="text-2xl font-bold text-[#F97316]">R${grandTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm font-medium text-[#A3A3A3]">Total</span>
+              <span className="text-2xl font-bold text-[#F97316]">R${grandTotal.toFixed(2)}</span>
+            </div>
+          )}
 
           {step === 'review' ? (
             <button
@@ -156,17 +259,33 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
             >
               Continuar
             </button>
-          ) : (
+          ) : step === 'details' ? (
             <div className="flex gap-3">
               <button
                 onClick={() => setStep('review')}
-                className="h-14 px-6 bg-[#F5F5F4] text-[#1C1917] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
+                className="h-14 px-6 bg-[#2A2A2A] text-[#F5F5F5] border border-[#333333] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={() => setStep('payment')}
+                disabled={!details.name || !details.address || !details.bairro}
+                className="flex-1 h-14 bg-[#F97316] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
+              >
+                Continuar
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep('details')}
+                className="h-14 px-6 bg-[#2A2A2A] text-[#F5F5F5] border border-[#333333] rounded-2xl font-semibold active:scale-[0.98] transition-transform"
               >
                 Voltar
               </button>
               <button
                 onClick={handleCheckout}
-                disabled={!details.name || !details.address}
+                disabled={!details.payment}
                 className="flex-1 h-14 bg-[#25D366] text-white rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
               >
                 Enviar WhatsApp
