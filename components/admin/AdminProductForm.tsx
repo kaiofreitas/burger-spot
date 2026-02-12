@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Product } from '../../types';
+import { Product, MenuCategory } from '../../types';
 import { supabase } from '../../lib/supabase';
 
 interface AdminProductFormProps {
   product?: Product;
+  categories?: MenuCategory[];
   onSave: (data: Omit<Product, 'id'> | (Partial<Product> & { id: string })) => void;
   onCancel: () => void;
 }
@@ -11,7 +12,7 @@ interface AdminProductFormProps {
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onSave, onCancel }) => {
+export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, categories = [], onSave, onCancel }) => {
   const isEdit = !!product;
 
   const [name, setName] = useState(product?.name || '');
@@ -19,6 +20,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
   const [price, setPrice] = useState(product?.price?.toString() || '');
   const [image, setImage] = useState(product?.image || '');
   const [category, setCategory] = useState<'burger' | 'drink'>(product?.category || 'burger');
+  const [menuCategoryId, setMenuCategoryId] = useState<string | null>(product?.menu_category_id ?? null);
   const [tags, setTags] = useState(product?.tags?.join(', ') || '');
   const [available, setAvailable] = useState(product?.available ?? true);
 
@@ -90,6 +92,8 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
       setUploading(false);
     }
 
+    const categoryId = category === 'burger' ? menuCategoryId : null;
+
     if (isEdit && product) {
       onSave({
         id: product.id,
@@ -101,6 +105,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
         tags: parsedTags,
         sort_order: product.sort_order,
         available,
+        menu_category_id: categoryId,
       });
     } else {
       onSave({
@@ -112,6 +117,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
         tags: parsedTags,
         sort_order: 0,
         available,
+        menu_category_id: categoryId,
       });
     }
   };
@@ -232,6 +238,27 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
               >
                 {previewSrc ? 'Trocar imagem' : 'Escolher imagem'}
               </button>
+              {previewSrc && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (imagePreview) URL.revokeObjectURL(imagePreview);
+                    setImageFile(null);
+                    setImagePreview(null);
+                    setImage('');
+                    setUploadError(null);
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-80"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#EF4444',
+                    border: '1px solid #EF4444',
+                  }}
+                >
+                  Remover imagem
+                </button>
+              )}
               {uploadError && (
                 <span className="text-xs" style={{ color: '#EF4444' }}>
                   {uploadError}
@@ -256,6 +283,26 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({ product, onS
             <option value="drink">Bebida</option>
           </select>
         </div>
+
+        {/* Sub-Category (burgers only) */}
+        {category === 'burger' && categories.length > 0 && (
+          <div className="mb-4">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+              Sub-Categoria
+            </label>
+            <select
+              value={menuCategoryId || ''}
+              onChange={(e) => setMenuCategoryId(e.target.value || null)}
+              className="w-full px-3 py-2.5 rounded-lg text-sm outline-none"
+              style={inputStyle}
+            >
+              <option value="">Sem categoria</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Tags */}
         <div className="mb-4">

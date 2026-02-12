@@ -135,11 +135,19 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                 items.map(item => (
                   <div key={item.id} className="py-4">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-                      />
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-sm">
+                            {item.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-[15px] text-[#F5F5F5]">{item.name}</h4>
                       </div>
@@ -186,6 +194,11 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                   onChange={e => setDetails({...details, name: e.target.value})}
                 />
               </div>
+              <BairroSelect
+                bairros={BAIRROS}
+                value={details.bairro}
+                onChange={(bairro) => setDetails({...details, bairro})}
+              />
               <div>
                 <label className="block text-base font-semibold text-[#F5F5F5] mb-3">Endereço</label>
                 <textarea
@@ -196,11 +209,6 @@ ${details.notes ? `Observação: ${details.notes}` : ''}
                   onChange={e => setDetails({...details, address: e.target.value})}
                 />
               </div>
-              <BairroSelect
-                bairros={BAIRROS}
-                value={details.bairro}
-                onChange={(bairro) => setDetails({...details, bairro})}
-              />
               <div>
                 <label className="block text-base font-semibold text-[#F5F5F5] mb-3">Observações (opcional)</label>
                 <input

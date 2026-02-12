@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { RESTAURANT_NAME, TAGLINE } from './constants';
 import { CartEntry, CartItem } from './types';
 import { ProductCard } from './components/ProductCard';
 import { CartModal } from './components/CartModal';
 import { DrinksPage } from './components/DrinksPage';
 import { useProducts } from './hooks/useProducts';
+import { useStoreSettings } from './hooks/useStoreSettings';
 import { ArrowRight } from 'lucide-react';
 
 type View = 'home' | 'drinks' | 'cart';
@@ -24,10 +24,24 @@ const getQuantity = (cart: Record<string, CartEntry>, id: string): number => {
 };
 
 const App: React.FC = () => {
-  const { burgers, drinks, allProducts, loading } = useProducts();
+  const { burgers, drinks, allProducts, categories, loading } = useProducts();
+  const { settings, cardLayout } = useStoreSettings();
   const [cart, setCart] = useState<Record<string, CartEntry>>({});
   const [view, setView] = useState<View>('home');
   const [bgColor, setBgColor] = useState(warmColors[0]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const filteredBurgers = useMemo(() => {
+    if (!activeCategory) return burgers;
+    return burgers.filter(b => b.menu_category_id === activeCategory);
+  }, [burgers, activeCategory]);
+
+  // Reset active category if it gets deleted
+  useEffect(() => {
+    if (activeCategory && !categories.find(c => c.id === activeCategory)) {
+      setActiveCategory(null);
+    }
+  }, [categories, activeCategory]);
 
   const handleUpdateQuantity = (id: string, delta: number) => {
     setCart(prev => {
@@ -153,13 +167,14 @@ const App: React.FC = () => {
       >
         {/* Header skeleton */}
         <div className="px-6 pt-16 pb-12">
-          <div className="mb-10">
-            <div className="h-14 w-48 bg-[#242424] rounded-lg animate-pulse mb-3" />
-            <div className="h-6 w-24 bg-[#242424] rounded-full animate-pulse" />
+          <div className="flex items-center justify-between mb-10">
+            <div className="h-6 w-40 bg-[#242424] rounded animate-pulse" />
+            <div className="h-16 w-16 bg-[#242424] rounded-full animate-pulse" />
           </div>
           <div className="space-y-2">
-            <div className="h-5 w-64 bg-[#242424] rounded animate-pulse" />
-            <div className="h-5 w-48 bg-[#242424] rounded animate-pulse" />
+            <div className="h-10 w-64 bg-[#242424] rounded animate-pulse" />
+            <div className="h-6 w-52 bg-[#242424] rounded animate-pulse" />
+            <div className="h-4 w-36 bg-[#242424] rounded animate-pulse mt-2" />
           </div>
         </div>
         {/* Product card skeletons */}
@@ -179,6 +194,17 @@ const App: React.FC = () => {
               </div>
             </div>
           ))}
+          {/* Compact card skeletons */}
+          {[1, 2].map(i => (
+            <div key={`compact-${i}`} className="bg-[#242424] rounded-2xl border border-[#2E2E2E] animate-pulse flex items-center gap-3 p-3">
+              <div className="w-16 h-16 rounded-xl bg-[#1A1A1A] flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="h-4 w-28 bg-[#1A1A1A] rounded mb-2" />
+                <div className="h-3 w-16 bg-[#1A1A1A] rounded" />
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#1A1A1A] flex-shrink-0" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -193,31 +219,66 @@ const App: React.FC = () => {
 
       {/* Header */}
       <header className="px-6 pt-16 pb-12">
-        <div className="mb-10">
-          <h1 className="text-6xl leading-[0.85] tracking-tight font-black text-[#F97316]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            BRANDÃO<br/>BURGUER
-          </h1>
-          <div className="bg-[#2A2A2A] px-3 py-1.5 rounded-full inline-block mt-3 border border-[#333333]">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#F97316]">Desde 2017</span>
-          </div>
+        <div className="flex items-center justify-between mb-10">
+          <span className="text-lg font-bold tracking-wide text-[#F97316] uppercase" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {settings.displayName}
+          </span>
+          <img
+            src={settings.logoUrl || '/logo.png'}
+            alt={settings.displayName}
+            className="h-16 w-16 rounded-full object-cover border-2 border-[#F97316]/30"
+          />
         </div>
 
-        <div className="space-y-1">
-          <p className="text-xl text-[#F5F5F5] font-medium tracking-tight">{TAGLINE}</p>
-          <p className="text-xl text-[#F5F5F5] font-medium tracking-tight">do jeito que tem que ser.</p>
-          <p className="text-xl text-[#A3A3A3] font-normal tracking-tight">Volta Redonda, RJ</p>
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-[#F5F5F5] leading-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {settings.featuredTitle}
+          </h1>
+          <p className="text-lg text-[#A3A3A3] font-normal tracking-tight mt-1">{settings.secondTitle}</p>
         </div>
       </header>
 
+      {/* Category Pills */}
+      {categories.length > 0 && (
+        <div className="sticky top-0 z-10 px-4 py-3 overflow-x-auto no-scrollbar" style={{ backgroundColor: bgColor }}>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors"
+              style={{
+                backgroundColor: activeCategory === null ? '#F97316' : '#2A2A2A',
+                color: activeCategory === null ? '#FFFFFF' : '#A3A3A3',
+              }}
+            >
+              Todos
+            </button>
+            {categories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors"
+                style={{
+                  backgroundColor: activeCategory === cat.id ? '#F97316' : '#2A2A2A',
+                  color: activeCategory === cat.id ? '#FFFFFF' : '#A3A3A3',
+                }}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Product List */}
       <main className="px-4 flex flex-col gap-6">
-        {burgers.map(burger => (
+        {filteredBurgers.map(burger => (
           <ProductCard
             key={burger.id}
             item={burger}
             quantity={getQuantity(cart, burger.id)}
             onAdd={() => handleAddNewItem(burger.id)}
             onRemove={() => handleUpdateQuantity(burger.id, -1)}
+            layout={cardLayout}
           />
         ))}
       </main>

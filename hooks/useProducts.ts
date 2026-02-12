@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, supabaseConfigured } from '../lib/supabase';
-import { Product } from '../types';
+import { Product, MenuCategory } from '../types';
 
 const FALLBACK_BURGERS: Product[] = [
   { id: 'b1', name: 'Clássica Americana', description: 'Pão brioche, carne 180g, queijo cheddar, alface, tomate e nosso molho especial.', price: 189, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80', tags: ['clássica', 'tradicional'], category: 'burger', available: true, sort_order: 0 },
@@ -26,7 +26,22 @@ export function useProducts() {
   const [allProducts, setAllProducts] = useState<Product[]>(
     supabaseConfigured ? [] : FALLBACK_PRODUCTS
   );
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(supabaseConfigured);
+
+  const fetchCategories = useCallback(async () => {
+    if (!supabaseConfigured) return;
+    const { data, error } = await supabase
+      .from('menu_categories')
+      .select('*')
+      .order('sort_order');
+
+    if (error) {
+      console.error('Error fetching categories:', error);
+    } else {
+      setCategories((data as MenuCategory[]) || []);
+    }
+  }, []);
 
   const fetchProducts = useCallback(async () => {
     if (!supabaseConfigured) return;
@@ -50,21 +65,30 @@ export function useProducts() {
     if (!supabaseConfigured) return;
 
     fetchProducts();
+    fetchCategories();
 
-    const channel = supabase
+    const productsChannel = supabase
       .channel('products-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
         fetchProducts();
       })
       .subscribe();
 
+    const categoriesChannel = supabase
+      .channel('categories-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_categories' }, () => {
+        fetchCategories();
+      })
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(productsChannel);
+      supabase.removeChannel(categoriesChannel);
     };
-  }, [fetchProducts]);
+  }, [fetchProducts, fetchCategories]);
 
   const burgers = allProducts.filter(p => p.category === 'burger');
   const drinks = allProducts.filter(p => p.category === 'drink');
 
-  return { burgers, drinks, allProducts, loading };
+  return { burgers, drinks, allProducts, categories, loading };
 }

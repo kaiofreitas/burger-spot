@@ -56,12 +56,20 @@ export const DrinksPage: React.FC<DrinksPageProps> = ({
               const qty = cart[drink.id]?.quantity || 0;
               return (
                 <div key={drink.id} className="flex items-center gap-3 bg-[#242424] p-3 rounded-2xl shadow-[0_2px_12px_rgb(0,0,0,0.2)] border border-[#2E2E2E]">
-                  <img
-                    src={drink.image}
-                    alt={drink.name}
-                    className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
-                    loading="lazy"
-                  />
+                  {drink.image ? (
+                    <img
+                      src={drink.image}
+                      alt={drink.name}
+                      className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-xl bg-orange-500 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold text-lg">
+                        {drink.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-[#F5F5F5] text-sm leading-tight">{drink.name}</h3>
                     <p className="text-[#F97316] font-semibold text-sm mt-0.5">R${drink.price.toFixed(2)}</p>

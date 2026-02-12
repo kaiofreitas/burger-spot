@@ -54,11 +54,19 @@ export const AdminProductRow: React.FC<AdminProductRowProps> = ({ product, onTog
         className="rounded-lg overflow-hidden flex-shrink-0"
         style={{ width: 40, height: 40, backgroundColor: '#2A2A2A' }}
       >
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover"
-        />
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-orange-500 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">
+              {product.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Name + Price */}
