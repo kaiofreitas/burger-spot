@@ -8,6 +8,11 @@ const DEFAULT_SETTINGS: StoreSettings = {
   featuredTitle: 'Lanche de verdade,',
   secondTitle: 'do jeito que tem que ser.',
   logoUrl: null,
+  instagramUrl: null,
+  facebookUrl: null,
+  whatsappUrl: null,
+  tiktokUrl: null,
+  youtubeUrl: null,
 };
 
 export function useStoreSettings() {
@@ -19,7 +24,7 @@ export function useStoreSettings() {
     setLoading(true);
     const { data, error } = await supabase
       .from('store_settings')
-      .select('card_layout, display_name, featured_title, second_title, logo_url')
+      .select('card_layout, display_name, featured_title, second_title, logo_url, instagram_url, facebook_url, whatsapp_url, tiktok_url, youtube_url')
       .eq('id', 1)
       .single();
 
@@ -33,6 +38,11 @@ export function useStoreSettings() {
         featuredTitle: data?.featured_title || DEFAULT_SETTINGS.featuredTitle,
         secondTitle: data?.second_title || DEFAULT_SETTINGS.secondTitle,
         logoUrl: data?.logo_url ?? null,
+        instagramUrl: data?.instagram_url ?? null,
+        facebookUrl: data?.facebook_url ?? null,
+        whatsappUrl: data?.whatsapp_url ?? null,
+        tiktokUrl: data?.tiktok_url ?? null,
+        youtubeUrl: data?.youtube_url ?? null,
       });
     }
     setLoading(false);

@@ -107,6 +107,11 @@ export const AdminSettingsTab: React.FC<AdminSettingsTabProps> = ({
   const [displayName, setDisplayName] = useState(settings.displayName);
   const [featuredTitle, setFeaturedTitle] = useState(settings.featuredTitle);
   const [secondTitle, setSecondTitle] = useState(settings.secondTitle);
+  const [instagramUrl, setInstagramUrl] = useState(settings.instagramUrl ?? '');
+  const [facebookUrl, setFacebookUrl] = useState(settings.facebookUrl ?? '');
+  const [whatsappUrl, setWhatsappUrl] = useState(settings.whatsappUrl ?? '');
+  const [tiktokUrl, setTiktokUrl] = useState(settings.tiktokUrl ?? '');
+  const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl ?? '');
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -116,6 +121,11 @@ export const AdminSettingsTab: React.FC<AdminSettingsTabProps> = ({
   useEffect(() => { setDisplayName(settings.displayName); }, [settings.displayName]);
   useEffect(() => { setFeaturedTitle(settings.featuredTitle); }, [settings.featuredTitle]);
   useEffect(() => { setSecondTitle(settings.secondTitle); }, [settings.secondTitle]);
+  useEffect(() => { setInstagramUrl(settings.instagramUrl ?? ''); }, [settings.instagramUrl]);
+  useEffect(() => { setFacebookUrl(settings.facebookUrl ?? ''); }, [settings.facebookUrl]);
+  useEffect(() => { setWhatsappUrl(settings.whatsappUrl ?? ''); }, [settings.whatsappUrl]);
+  useEffect(() => { setTiktokUrl(settings.tiktokUrl ?? ''); }, [settings.tiktokUrl]);
+  useEffect(() => { setYoutubeUrl(settings.youtubeUrl ?? ''); }, [settings.youtubeUrl]);
 
   // Cleanup debounce timers on unmount
   useEffect(() => {
@@ -284,6 +294,107 @@ export const AdminSettingsTab: React.FC<AdminSettingsTabProps> = ({
           value={secondTitle}
           onChange={handleSecondTitleChange}
           placeholder="Ex: do jeito que tem que ser."
+        />
+      </div>
+
+      {/* ── Divider ── */}
+      <div className="border-t border-[#2E2E2E] mb-6" />
+
+      {/* ── Social Media Links ── */}
+      <h2 className="text-lg font-bold mb-1" style={{ color: '#F5F5F5', fontFamily: 'Inter, sans-serif' }}>
+        Redes Sociais
+      </h2>
+      <p className="text-sm mb-6" style={{ color: '#A3A3A3' }}>
+        Configure os links das suas redes sociais.
+      </p>
+
+      {/* Instagram */}
+      <div className="mb-5">
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+          Instagram
+        </label>
+        <input
+          type="text"
+          value={instagramUrl}
+          onChange={e => {
+            setInstagramUrl(e.target.value);
+            debouncedUpdate('instagramUrl', e.target.value || '');
+          }}
+          onBlur={() => handleBlur('instagramUrl', instagramUrl || '')}
+          className="w-full px-3 py-2.5 rounded-lg text-sm outline-none bg-zinc-800 border border-[#333333] text-[#F5F5F5]"
+          placeholder="https://instagram.com/sualoja"
+        />
+      </div>
+
+      {/* Facebook */}
+      <div className="mb-5">
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+          Facebook
+        </label>
+        <input
+          type="text"
+          value={facebookUrl}
+          onChange={e => {
+            setFacebookUrl(e.target.value);
+            debouncedUpdate('facebookUrl', e.target.value || '');
+          }}
+          onBlur={() => handleBlur('facebookUrl', facebookUrl || '')}
+          className="w-full px-3 py-2.5 rounded-lg text-sm outline-none bg-zinc-800 border border-[#333333] text-[#F5F5F5]"
+          placeholder="https://facebook.com/sualoja"
+        />
+      </div>
+
+      {/* WhatsApp */}
+      <div className="mb-5">
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+          WhatsApp
+        </label>
+        <input
+          type="text"
+          value={whatsappUrl}
+          onChange={e => {
+            setWhatsappUrl(e.target.value);
+            debouncedUpdate('whatsappUrl', e.target.value || '');
+          }}
+          onBlur={() => handleBlur('whatsappUrl', whatsappUrl || '')}
+          className="w-full px-3 py-2.5 rounded-lg text-sm outline-none bg-zinc-800 border border-[#333333] text-[#F5F5F5]"
+          placeholder="https://wa.me/5511999999999"
+        />
+      </div>
+
+      {/* TikTok */}
+      <div className="mb-5">
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+          TikTok
+        </label>
+        <input
+          type="text"
+          value={tiktokUrl}
+          onChange={e => {
+            setTiktokUrl(e.target.value);
+            debouncedUpdate('tiktokUrl', e.target.value || '');
+          }}
+          onBlur={() => handleBlur('tiktokUrl', tiktokUrl || '')}
+          className="w-full px-3 py-2.5 rounded-lg text-sm outline-none bg-zinc-800 border border-[#333333] text-[#F5F5F5]"
+          placeholder="https://tiktok.com/@sualoja"
+        />
+      </div>
+
+      {/* YouTube */}
+      <div className="mb-6">
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={labelStyle}>
+          YouTube
+        </label>
+        <input
+          type="text"
+          value={youtubeUrl}
+          onChange={e => {
+            setYoutubeUrl(e.target.value);
+            debouncedUpdate('youtubeUrl', e.target.value || '');
+          }}
+          onBlur={() => handleBlur('youtubeUrl', youtubeUrl || '')}
+          className="w-full px-3 py-2.5 rounded-lg text-sm outline-none bg-zinc-800 border border-[#333333] text-[#F5F5F5]"
+          placeholder="https://youtube.com/@sualoja"
         />
       </div>
 

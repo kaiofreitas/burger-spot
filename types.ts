@@ -46,6 +46,11 @@ export interface StoreSettings {
   featuredTitle: string;
   secondTitle: string;
   logoUrl: string | null;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  whatsappUrl: string | null;
+  tiktokUrl: string | null;
+  youtubeUrl: string | null;
 }
 
 export type PaymentMethod = 'pix' | 'cartao' | 'dinheiro';

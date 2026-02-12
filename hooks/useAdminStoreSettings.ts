@@ -8,6 +8,11 @@ const DEFAULT_SETTINGS: StoreSettings = {
   featuredTitle: 'Lanche de verdade,',
   secondTitle: 'do jeito que tem que ser.',
   logoUrl: null,
+  instagramUrl: null,
+  facebookUrl: null,
+  whatsappUrl: null,
+  tiktokUrl: null,
+  youtubeUrl: null,
 };
 
 /** Maps camelCase StoreSettings keys to snake_case DB columns */
@@ -17,6 +22,11 @@ const camelToSnake: Record<string, string> = {
   featuredTitle: 'featured_title',
   secondTitle: 'second_title',
   logoUrl: 'logo_url',
+  instagramUrl: 'instagram_url',
+  facebookUrl: 'facebook_url',
+  whatsappUrl: 'whatsapp_url',
+  tiktokUrl: 'tiktok_url',
+  youtubeUrl: 'youtube_url',
 };
 
 export function useAdminStoreSettings() {
@@ -28,7 +38,7 @@ export function useAdminStoreSettings() {
     setLoading(true);
     const { data, error } = await supabase
       .from('store_settings')
-      .select('card_layout, display_name, featured_title, second_title, logo_url')
+      .select('card_layout, display_name, featured_title, second_title, logo_url, instagram_url, facebook_url, whatsapp_url, tiktok_url, youtube_url')
       .eq('id', 1)
       .single();
 
@@ -42,6 +52,11 @@ export function useAdminStoreSettings() {
         featuredTitle: data?.featured_title || DEFAULT_SETTINGS.featuredTitle,
         secondTitle: data?.second_title || DEFAULT_SETTINGS.secondTitle,
         logoUrl: data?.logo_url ?? null,
+        instagramUrl: data?.instagram_url ?? null,
+        facebookUrl: data?.facebook_url ?? null,
+        whatsappUrl: data?.whatsapp_url ?? null,
+        tiktokUrl: data?.tiktok_url ?? null,
+        youtubeUrl: data?.youtube_url ?? null,
       });
     }
     setLoading(false);
